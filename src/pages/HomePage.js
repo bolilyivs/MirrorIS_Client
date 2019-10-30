@@ -43,30 +43,30 @@ class HomePage extends React.Component{
                         <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>
-                                <Header as='h3' image>
+                                <Header as='h3'>
                                     <Header.Content>
                                         Task Name
                                     </Header.Content>
                                 </Header>     
                             </Table.HeaderCell>
                             <Table.HeaderCell>
-                                <Header as='h3' image>
+                                <Header as='h3'>
                                     <Header.Content>
-                                    Master
+                                        Master
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
                             <Table.HeaderCell>
-                                <Header as='h3' image>
+                                <Header as='h3'>
                                     <Header.Content>
-                                    Active
+                                        Active
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
                             <Table.HeaderCell>
-                                <Header as='h3' image>
+                                <Header as='h3'>
                                     <Header.Content>
-                                    Last Run Date
+                                        Last Run Date
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
@@ -78,7 +78,7 @@ class HomePage extends React.Component{
                                 this.state.data.map(item =>(
                                     <Table.Row key={item.id}>
                                         <Table.Cell>
-                                            <Header as='h4' image>
+                                            <Header as='h4'>
                                                 <Header.Content>
                                                     {item.name}
                                                 </Header.Content>
@@ -93,7 +93,7 @@ class HomePage extends React.Component{
                                             </Header>                  
                                         </Table.Cell>
                                         <Table.Cell>
-                                            <Header as='h4' image>
+                                            <Header as='h4'>
                                                 <Header.Content>
                                                 {(() => {
                                                     switch (item.status) {
@@ -107,7 +107,7 @@ class HomePage extends React.Component{
                                             </Header>         
                                         </Table.Cell>
                                         <Table.Cell>
-                                            <Header as='h4' image>
+                                            <Header as='h4'>
                                                 <Header.Content>
                                                     {item.lastUpdate}
                                                 </Header.Content>
@@ -149,7 +149,7 @@ class HomePage extends React.Component{
                         <Table.Footer>
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
-                            <Menu floated='center' pagination>
+                            <Menu floated='right' pagination>
                                 <Menu.Item as='a' icon>
                                 <Icon name='chevron left' />
                                 </Menu.Item>
