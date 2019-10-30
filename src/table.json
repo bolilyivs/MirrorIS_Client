@@ -1,0 +1,35 @@
+[
+    {
+      "id": 1,
+      "lastUpdate": "29-10-2019",
+      "name": "Ubuntu1",
+      "status": 0,
+      "user": {
+        "group": 0,
+        "id": 1,
+        "username": "Jack01"
+      }
+    },
+    {
+      "id": 2,
+      "lastUpdate": "29-10-2019",
+      "name": "OpenSuse",
+      "status": 1,
+      "user": {
+        "group": 0,
+        "id": 2,
+        "username": "john02"
+      }
+    },
+    {
+      "id": 3,
+      "lastUpdate": "29-10-2019",
+      "name": "CentOS",
+      "status": 2,
+      "user": {
+        "group": 0,
+        "id": 3,
+        "username": "Bred03"
+      }
+    }
+]
