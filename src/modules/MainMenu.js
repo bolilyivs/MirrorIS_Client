@@ -29,9 +29,21 @@ class MainMenu extends React.Component{
                     />
                     <Menu.Item
                         name='settings'
-                        active={activeItem === 'Settings'}
+                        active={activeItem === 'settings'}
                         onClick={this.handleItemClick}
                         as={Link} to="/settings"
+                    />
+                    <Menu.Item
+                        name='users'
+                        active={activeItem === 'users'}
+                        onClick={this.handleItemClick}
+                        as={Link} to="/users"
+                    />
+                    <Menu.Item
+                        name='log'
+                        active={activeItem === 'log'}
+                        onClick={this.handleItemClick}
+                        as={Link} to="/log"
                     />
                     <Menu.Menu position='right'>
                         <Menu.Item
