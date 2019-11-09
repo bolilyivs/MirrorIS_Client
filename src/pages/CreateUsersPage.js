@@ -1,6 +1,8 @@
 import React from 'react';
 import {Grid, Button, Input, Segment, Form, Select, Message} from 'semantic-ui-react';
-import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router'
+import axios from 'axios';
+import Query from '../config.js'
 
 const type = [
     { key: '0', text: 'User', value: '0' },
@@ -10,7 +12,7 @@ const type = [
 class CreateUsersPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { userName: '', password: '', password2: '', group: '', check: false
+        this.state = { username: '', password: '', password2: '', group: '', check: false, redirect: false
         }
     }
 
@@ -23,15 +25,30 @@ class CreateUsersPage extends React.Component{
         }else{
             this.setState({check: false});
         }
-        
-        var { userName, password, group } = this.state
-        console.log(JSON.stringify({ userName, password, group }, null, 11));
+        var { username, password, group } = this.state
+        console.log(JSON.stringify({ username, password, group }, null, 11));
+
+        axios.post(Query.createUserPOST, JSON.stringify({ username, password, group }, null, 3), {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                }
+            }
+        ).then(res => {     
+            if(res.data === "ok"){
+                this.setState({ redirect: true })
+            }    
+            console.log(res.data);
+      })
+
     }
 
     render(){
-        const { userName, password, password2, group} = this.state
+        const { username, password, password2, group, redirect} = this.state
         
-       
+        if (redirect) {
+            return <Redirect to='/users'/>;
+        }
 
         return <Grid centered stackable columns={3}>
             <Grid.Row><h1>Create User</h1></Grid.Row>
@@ -48,7 +65,7 @@ class CreateUsersPage extends React.Component{
                 <Grid.Column>
                     <Form size='big'>       
                         <Form.Field required>
-                            <Input label={{icon: "user", content: "User Name"}} placeholder='Name' name='userName' value={userName} onChange={this.handleChange}/>
+                            <Input label={{icon: "user", content: "User Name"}} placeholder='Name' name='username' value={username} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field required>
                             <Input label={{icon: "key", content: "Password"}} type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
@@ -72,9 +89,8 @@ class CreateUsersPage extends React.Component{
             </Grid.Column>
 
             <Button primary size="big" content='Save' onClick={this.handleSubmit}  
-            disabled={ !this.state.userName || !this.state.password || !this.state.password2 || !this.state.group}/>  
-            
-            
+            disabled={ !this.state.username || !this.state.password || !this.state.password2 || !this.state.group}/>  
+ 
         </Grid>
        
     }

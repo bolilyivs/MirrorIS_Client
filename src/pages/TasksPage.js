@@ -2,6 +2,7 @@ import React from 'react';
 import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
+import Query from '../config.js'
 
 var str = '[ { "id": 1, "repository": "task1", "message": "msg4234444444gdfgdfgdddddddddddddddddddfkgjdfgbdfgbhdfgbdfgbdfgdbgbdfghdfhgh4444444444444444444444444444444444423423423423nb4b23jh4bh23b4jh23b4h2b3jh4b23h4bh23b4hb234b23bh4h23jb4h23b4", "user": "Jack01", "date": "29-10-2019"}, { "id": 2, "repository": "task2", "message": "msg", "username": "Tom01", "date": "29-10-2019"}, { "id": 3,  "taskName": "task3", "message": "msg",  "username": "Ben01", "date": "29-10-2019"} ]';
 
@@ -14,7 +15,7 @@ class TasksPage extends React.Component{
 
     componentDidMount() {
         axios.get(
-            'http://127.0.0.1:5000/task',
+            Query.taskGET,
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa('root' + ":" + '123'),

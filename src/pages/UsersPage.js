@@ -1,8 +1,8 @@
 import React from 'react';
-import {Grid, Table, Menu, Icon, Button, Header, Image, Label} from 'semantic-ui-react';
+import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
-import UpdateUsersPage from './UpdateUsersPage';
 import axios from 'axios';
+import Query from '../config.js'
 
 var str = '[ { "id" : 1, "username": "John", "group": 1 }, { "id" : 2, "username": "Ben", "group": 0 }, { "id" : 3, "username": "Tom", "group": 0 } ]';
 //var str = '[ { "id": 1, "lastUpdate": "29-10-2019", "name": "Ubuntu1", "status": 0, "user": { "group": 0, "id": 1, "username": "Jack01" } }, { "id": 2, "lastUpdate": "29-10-2019", "name": "OpenSuse", "status": 1, "user": { "group": 0, "id": 2, "username": "john02" } }, { "id": 3, "lastUpdate": "29-10-2019", "name": "CentOS", "status": 2, "user": { "group": 0, "id": 3, "username": "Bred03" } } ]';
@@ -14,7 +14,7 @@ class UsersPage extends React.Component{
     }
     componentDidMount() {
         axios.get(
-            'http://127.0.0.1:5000/user',
+            Query.userGET,
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa('root' + ":" + '123'),

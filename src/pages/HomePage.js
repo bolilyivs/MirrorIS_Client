@@ -2,7 +2,6 @@ import React from 'react';
 import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
-import isObject from 'isobject';
 import Query from '../config.js'
 
 var str = '[ { "id": 1, "updated_at": "29-10-2019", "name": "Ubuntu1", "schedule_run": 1, "schedule_status": 0, "user": "Jack01" }, { "id": 2, "updated_at": "29-10-2019", "name": "OpenSuse", "schedule_run": 0, "schedule_status": 1, "user": "john02" }, { "id": 3, "updated_at": "29-10-2019", "name": "CentOS", "schedule_run": 0, "schedule_status": 0, "user": "Bred03" } ]';
@@ -19,7 +18,7 @@ class HomePage extends React.Component{
 
     componentDidMount() {
         axios.get(
-            Query.first,
+            Query.repositoryGET,
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa('root' + ":" + '123'),

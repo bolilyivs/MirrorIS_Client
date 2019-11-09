@@ -1,6 +1,8 @@
 import React from 'react';
 import {Grid, Button, Input, Dropdown, Form, Select, GridColumn} from 'semantic-ui-react';
-import { Link } from 'react-router-dom'
+import axios from 'axios';
+import { Redirect } from 'react-router'
+import Query from '../config.js'
 
 const options = [
     { key: 'false', text: 'Inactive', value: 'false' },
@@ -14,27 +16,48 @@ const type = [
 class CreateRepositoryPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { taskName: '', mirrorURL: '', status: '', 
-        mirrorLocation: '', numberSnapshots: '', mirrorType: '',
-        minutes: '', hours: '', days: '', months: '', years: ''
+        this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
+        mirror_location: '', schedule_number: '', mirror_type: '',
+        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false
         }
     }
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
     handleSubmit = () => {
-        var { taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years} = this.state
-        if(!this.state.numberSnapshots) { numberSnapshots = 1 }
-        if(!this.state.minutes) { minutes = 0 }
-        if(!this.state.hours) { hours = 0 }
-        if(!this.state.days) { days = 0 }
-        if(!this.state.months) { months = 0 }
-        if(!this.state.years) { years = 0 }
-        console.log(JSON.stringify({ taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years }, null, 11));
+        var { name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run,  schedule_number, 
+            schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year} = this.state
+        if(!this.state.schedule_number) { schedule_number = 1 }
+        if(!this.state.schedule_minute) { schedule_minute = 0 }
+        if(!this.state.schedule_hour) { schedule_hour = 0 }
+        if(!this.state.schedule_day) { schedule_day = 0 }
+        if(!this.state.schedule_month) { schedule_month = 0 }
+        if(!this.state.schedule_year) { schedule_year = 0 }
+        console.log(JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+            schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11));
+
+        axios.post(Query.createRepositoryPOST, JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run, schedule_number, 
+                                                                            schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                }
+            }
+        ).then(res => {     
+            if(res.data === "ok"){
+                this.setState({ redirect: true })
+            }    
+            console.log(res.data);
+      })
     }
 
     render(){
-        const { taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years} = this.state
+        const { name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+            schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year, redirect} = this.state
+        
+        if (redirect) {
+            return <Redirect to='/'/>;
+        }
 
         return <Grid centered stackable columns={3}>
             <Grid.Row>
@@ -51,13 +74,13 @@ class CreateRepositoryPage extends React.Component{
                             <label>Main: </label>
                         </Form.Field>  
                         <Form.Field required>
-                            <Input label='Repository Name' placeholder='Name' name='taskName' value={taskName} onChange={this.handleChange}/>
+                            <Input label='Repository Name' placeholder='Name' name='name' value={name} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field required>
-                            <Input label='MirrorLocation' placeholder='URL' name='mirrorLocation' value={mirrorLocation} onChange={this.handleChange}/>
+                            <Input label='MirrorLocation' placeholder='URL' name='mirror_location' value={mirror_location} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field required>
-                            <Input label='MirrorURL' placeholder='URL' name='mirrorURL' value={mirrorURL} onChange={this.handleChange}/>
+                            <Input label='MirrorURL' placeholder='URL' name='mirror_url' value={mirror_url} onChange={this.handleChange}/>
                         </Form.Field>
 
                         <Form.Field
@@ -65,8 +88,8 @@ class CreateRepositoryPage extends React.Component{
                             control={Select}
                             options={type}
                             placeholder='Mirror Type'
-                            name='mirrorType'
-                            value={mirrorType} 
+                            name='mirror_type'
+                            value={mirror_type} 
                             onChange={this.handleChange}
                         />
                         <Form.Field
@@ -74,8 +97,8 @@ class CreateRepositoryPage extends React.Component{
                             control={Select}
                             options={options}
                             placeholder='Status'
-                            name='status'
-                            value={status} 
+                            name='schedule_status'
+                            value={schedule_status} 
                             onChange={this.handleChange}
                         /> 
 
@@ -84,22 +107,22 @@ class CreateRepositoryPage extends React.Component{
                         </Form.Field> 
 
                          <Form.Field>
-                            <Input label='Number of snapshots' placeholder='Number' name='numberSnapshots' value={numberSnapshots} onChange={this.handleChange}/>
+                            <Input label='Number of snapshots' placeholder='Number' name='schedule_number' value={schedule_number} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Minutes' placeholder='Minutes' name='minutes' value={minutes} onChange={this.handleChange}/>
+                            <Input label='Minutes' placeholder='Minutes' name='schedule_minute' value={schedule_minute} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Hours' placeholder='Hours' name='hours' value={hours} onChange={this.handleChange}/>
+                            <Input label='Hours' placeholder='Hours' name='schedule_hour' value={schedule_hour} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Days' placeholder='Days' name='days' value={days} onChange={this.handleChange}/>
+                            <Input label='Days' placeholder='Days' name='schedule_day' value={schedule_day} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Months' placeholder='Months' name='months' value={months} onChange={this.handleChange}/>
+                            <Input label='Months' placeholder='Months' name='schedule_month' value={schedule_month} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Years' placeholder='Years' name='years' value={years} onChange={this.handleChange}/>
+                            <Input label='Years' placeholder='Years' name='schedule_year' value={schedule_year} onChange={this.handleChange}/>
                         </Form.Field> 
                        
                     </Form>                         
@@ -107,11 +130,11 @@ class CreateRepositoryPage extends React.Component{
             <Grid.Column>  
             </Grid.Column>
 
-            <Button primary size="big" content='Save' onClick={this.handleSubmit}  
-            disabled={ !this.state.taskName || !this.state.mirrorURL || !this.state.mirrorLocation || !this.state.mirrorType || !this.state.status}/>
-            <Button primary size="big" content='Run task' onClick={this.handleSubmit}/>
+            <Button style={{width: "200px"}} primary size="big" content='Create' onClick={this.handleSubmit}   
+            disabled={ !this.state.name || !this.state.mirror_url || !this.state.mirror_location || !this.state.mirror_type || !this.state.schedule_status}/>
+            {/* <Button primary size="big" content='Run task' onClick={this.handleSubmit}/>
             <Button negative size="big" content='Remove task' onClick={this.handleSubmit}/>
-            <Button negative size="big" content='Reset' onClick={this.handleSubmit}/>       
+            <Button negative size="big" content='Reset' onClick={this.handleSubmit}/>        */}
         </Grid>
        
     }
