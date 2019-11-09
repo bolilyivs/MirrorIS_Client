@@ -1,134 +1,145 @@
 import React from 'react';
-import {Grid, Button, Input, Dropdown, Form, Select, GridColumn} from 'semantic-ui-react';
+import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react';
+import axios from 'axios';
 import { Link } from 'react-router-dom'
 
-const options = [
-    { key: 'false', text: 'Inactive', value: 'false' },
-    { key: 'true', text: 'Active', value: 'true' }
-  ]
-const type = [
-    { key: '0', text: 'rsync', value: '0' },
-    { key: '1', text: 'yum repo', value: '1' }
-  ]
-const snap = [
-    { key: '1', text: '1', value: '1' },
-    { key: '2', text: '2', value: '2' },
-    { key: '3', text: '3', value: '3' },
-    { key: '4', text: '4', value: '4' },
-    { key: '5', text: '5', value: '5' },
-    { key: '6', text: '6', value: '6' },
-    { key: '7', text: '7', value: '7' },
-    { key: '8', text: '8', value: '8' }
-  ]
+var str = '[ { "id": 1, "repository": "task1", "message": "msg4234444444gdfgdfgdddddddddddddddddddfkgjdfgbdfgbhdfgbdfgbdfgdbgbdfghdfhgh4444444444444444444444444444444444423423423423nb4b23jh4bh23b4jh23b4h2b3jh4b23h4bh23b4hb234b23bh4h23jb4h23b4", "user": "Jack01", "date": "29-10-2019"}, { "id": 2, "repository": "task2", "message": "msg", "username": "Tom01", "date": "29-10-2019"}, { "id": 3,  "taskName": "task3", "message": "msg",  "username": "Ben01", "date": "29-10-2019"} ]';
+
 class TasksPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { taskName: '', mirrorURL: '', status: '', 
-        mirrorLocation: '', numberSnapshots: '', mirrorType: '',
-        minutes: '', hours: '', days: '', months: '', years: ''
-        }
+        //this.state = { data: JSON.parse(str) };
+        this.state = {data: []}
     }
 
-   
-
-    handleChange = (e, { name, value }) => this.setState({ [name]: value })
-
-    handleSubmit = () => {
-        var { taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years} = this.state
-        if(!this.state.numberSnapshots) { numberSnapshots = 1 }
-        if(!this.state.minutes) { minutes = 0 }
-        if(!this.state.hours) { hours = 0 }
-        if(!this.state.days) { days = 0 }
-        if(!this.state.months) { months = 0 }
-        if(!this.state.years) { years = 0 }
-        console.log(JSON.stringify({ taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years }, null, 11));
-    }
+    componentDidMount() {
+        axios.get(
+            'http://127.0.0.1:5000/task',
+            {   headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    }
+                }
+                )
+                .then((response) => {
+                    var data = response.data;
+                    this.setState({ data });
+                },
+                (error) => {
+                    console.log(error.data);
+                }
+            );
+      }
 
     render(){
-        const { taskName, mirrorURL, mirrorLocation, mirrorType, status, numberSnapshots, minutes, hours, days, months, years} = this.state
+        console.log(this.state.data);
+        return <Grid centered stackable columns={2}>
+            <Grid.Row>
+                <Grid.Column width={10}>
+                    <h1>Tasks</h1>
+                </Grid.Column>
+            </Grid.Row>
+          
+            <Grid.Row>
+                <Grid.Column width={10}>
+                    <Table singleLine fixed>
+                        <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>
+                                <Header as='h3'>
+                                    <Header.Content>
+                                        Repository Name
+                                    </Header.Content>
+                                </Header>     
+                            </Table.HeaderCell>
+                            <Table.HeaderCell>
+                                <Header as='h3'>
+                                    <Header.Content>
+                                        Message
+                                    </Header.Content>
+                                </Header>   
+                            </Table.HeaderCell>
+                            <Table.HeaderCell>
+                                <Header as='h3'>
+                                    <Header.Content>
+                                        User Name
+                                    </Header.Content>
+                                </Header>   
+                            </Table.HeaderCell>
+                            <Table.HeaderCell>
+                                <Header as='h3'>
+                                    <Header.Content>
+                                        Date
+                                    </Header.Content>
+                                </Header>   
+                            </Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
 
-        return <Grid centered stackable columns={3}>
-            <Grid.Row></Grid.Row>
-            <Grid.Column>
+                        <Table.Body>
+                            {
+                                this.state.data.map(item =>(
+                                    <Table.Row key={item.id}>
+                                        <Table.Cell>
+                                            <Header as='h4'>
+                                                <Header.Content>
+                                                    <Link to={`/detail_task/${item.id}`}> { item.repository } </Link>                                      
+                                                </Header.Content>
+                                            </Header>     
+                                        </Table.Cell>
+                                        
+                                        <Table.Cell>         
+                                            <Header as='h4'>
+                                                <Header.Content>
+                                                    <span class='table'>
+                                                        {item.message}      
+                                                    </span>                 
+                                                </Header.Content>
+                                            </Header>         
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <Header as='h4' image>
+                                                <Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1024px-User_icon_2.svg.png' rounded size='mini' />
+                                                <Header.Content>
+                                                    {item.user}
+                                                </Header.Content>
+                                            </Header>                  
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <Header as='h4'>
+                                                <Header.Content>
+                                                    {item.date}
+                                                </Header.Content>
+                                            </Header>                         
+                                        </Table.Cell>
+                                    </Table.Row>
+                                    
+                                ))
+                            }                  
+                        </Table.Body>
 
-            </Grid.Column>
-                <Grid.Column>
-                    <Form size='big'>       
-                        <Form.Field required>
-                            <label>Main: </label>
-                        </Form.Field>  
-                        <Form.Field required>
-                            <Input label='Task Name' placeholder='Name' name='taskName' value={taskName} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field required>
-                            <Input label='MirrorLocation' placeholder='URL' name='mirrorLocation' value={mirrorLocation} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field required>
-                            <Input label='MirrorURL' placeholder='URL' name='mirrorURL' value={mirrorURL} onChange={this.handleChange}/>
-                        </Form.Field>
-
-                        <Form.Field
-                            required
-                            control={Select}
-                            options={type}
-                            placeholder='Mirror Type'
-                            name='mirrorType'
-                            value={mirrorType} 
-                            onChange={this.handleChange}
-                        />
-                        <Form.Field
-                            required
-                            control={Select}
-                            options={options}
-                            placeholder='Status'
-                            name='status'
-                            value={status} 
-                            onChange={this.handleChange}
-                        /> 
-
-                        <Form.Field>
-                            <label>Shedule: </label>
-                        </Form.Field> 
-                        {/* <Form.Field>
-                            <Input label='Number of snapshots' placeholder='Number' name='numberSnapshots' value={numberSnapshots} onChange={this.handleChange}/>
-                        </Form.Field> */}
-                        <Form.Field
-                            required
-                            control={Select}
-                            options={snap}
-                            placeholder='Number of snapshots'
-                            name='numberSnapshots'
-                            value={numberSnapshots} 
-                            onChange={this.handleChange}
-                        /> 
-                        <Form.Field>
-                            <Input label='Minutes' placeholder='Minutes' name='minutes' value={minutes} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <Input label='Hours' placeholder='Hours' name='hours' value={hours} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <Input label='Days' placeholder='Days' name='days' value={days} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <Input label='Months' placeholder='Months' name='months' value={months} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field>
-                            <Input label='Years' placeholder='Years' name='years' value={years} onChange={this.handleChange}/>
-                        </Form.Field> 
-                       
-                    </Form>                         
-                    </Grid.Column> 
-            <Grid.Column>  
-            </Grid.Column>
-
-            <Button primary size="big" content='Save' onClick={this.handleSubmit}  
-            disabled={ !this.state.taskName || !this.state.mirrorURL || !this.state.mirrorLocation || !this.state.mirrorType || !this.state.status}/>
-            <Button primary size="big" content='Run task' onClick={this.handleSubmit}/>
-            <Button negative size="big" content='Remove task' onClick={this.handleSubmit}/>
-            <Button negative size="big" content='Reset' onClick={this.handleSubmit}/>       
+                        <Table.Footer>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='4'>
+                            <Menu floated='right' pagination>
+                                <Menu.Item as='a' icon>
+                                <Icon name='chevron left' />
+                                </Menu.Item>
+                                <Menu.Item as='a'>1</Menu.Item>
+                                <Menu.Item as='a'>2</Menu.Item>
+                                <Menu.Item as='a'>3</Menu.Item>
+                                <Menu.Item as='a'>4</Menu.Item>
+                                <Menu.Item as='a' icon>
+                                <Icon name='chevron right' />
+                                </Menu.Item>
+                            </Menu>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Footer>
+                    </Table>  
+                </Grid.Column>   
+            </Grid.Row>    
         </Grid>
-       
     }
 }
 

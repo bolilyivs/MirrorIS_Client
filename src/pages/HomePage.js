@@ -1,11 +1,11 @@
 import React from 'react';
 import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react';
+import axios from 'axios';
 import { Link } from 'react-router-dom'
 import isObject from 'isobject';
+import Query from '../config.js'
 
-
-
-var str = '[ { "id": 1, "lastUpdate": "29-10-2019", "name": "Ubuntu1", "status": 0, "user": { "group": 0, "id": 1, "username": "Jack01" } }, { "id": 2, "lastUpdate": "29-10-2019", "name": "OpenSuse", "status": 1, "user": { "group": 0, "id": 2, "username": "john02" } }, { "id": 3, "lastUpdate": "29-10-2019", "name": "CentOS", "status": 2, "user": { "group": 0, "id": 3, "username": "Bred03" } } ]';
+var str = '[ { "id": 1, "updated_at": "29-10-2019", "name": "Ubuntu1", "schedule_run": 1, "schedule_status": 0, "user": "Jack01" }, { "id": 2, "updated_at": "29-10-2019", "name": "OpenSuse", "schedule_run": 0, "schedule_status": 1, "user": "john02" }, { "id": 3, "updated_at": "29-10-2019", "name": "CentOS", "schedule_run": 0, "schedule_status": 0, "user": "Bred03" } ]';
 
 var obj = JSON.parse(str);
 
@@ -13,21 +13,40 @@ var obj = JSON.parse(str);
 class HomePage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { data: JSON.parse(str) };
+        //this.state = { data: JSON.parse(str) };
+        this.state = {data: []}
     }
 
-    // componentWillMount() {
-    //     this.setState({
-    //         data: JSON.parse(str)
-    //     });
-    //   }
+    componentDidMount() {
+        axios.get(
+            Query.first,
+            {   headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    }
+                }
+                )
+                .then((response) => {
+                    var data = response.data;
+                    this.setState({ data });
+                },
+                (error) => {
+                    console.log(error.data);
+                }
+            );
+      }
 
     render(){
         console.log(this.state.data);
         return <Grid centered stackable columns={2}>
             <Grid.Row>
                 <Grid.Column width={10}>
-                    <Button primary floated="right" size="big" style={{width: "200px"}}>Add</Button>
+                    <h1>Repositories</h1>
+                </Grid.Column>
+                <Grid.Column width={10}>
+                    <Link to="/create_repository">
+                        <Button primary floated="right" size="big" style={{width: "200px"}}>Add Repository</Button>
+                    </Link> 
                 </Grid.Column>    
             </Grid.Row>
           
@@ -39,7 +58,7 @@ class HomePage extends React.Component{
                             <Table.HeaderCell>
                                 <Header as='h3'>
                                     <Header.Content>
-                                        Task Name
+                                        Repository Name
                                     </Header.Content>
                                 </Header>     
                             </Table.HeaderCell>
@@ -74,7 +93,7 @@ class HomePage extends React.Component{
                                         <Table.Cell>
                                             <Header as='h4'>
                                                 <Header.Content>
-                                                    {item.name}
+                                                    <Link to={`/update_repository/${item.id}`}> { item.name } </Link>                             
                                                 </Header.Content>
                                             </Header>     
                                         </Table.Cell>
@@ -82,7 +101,7 @@ class HomePage extends React.Component{
                                             <Header as='h4' image>
                                                 <Image src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1024px-User_icon_2.svg.png' rounded size='mini' />
                                                 <Header.Content>
-                                                    {item.user.username}
+                                                    {item.user}
                                                 </Header.Content>
                                             </Header>                  
                                         </Table.Cell>
@@ -90,11 +109,12 @@ class HomePage extends React.Component{
                                             <Header as='h4'>
                                                 <Header.Content>
                                                 {(() => {
-                                                    switch (item.status) {
-                                                        case 0:   return "Inactive";
-                                                        case 1: return "Active";
-                                                        case 2:  return "Run";
-                                                        default:      return "Inactive";
+                                                    if(item.schedule_run == true){
+                                                        return "Run"
+                                                    }else if(item.schedule_status == true){
+                                                        return "Active"
+                                                    }else{
+                                                        return "Inactive"
                                                     }
                                                 })()}
                                                 </Header.Content>
@@ -103,7 +123,7 @@ class HomePage extends React.Component{
                                         <Table.Cell>
                                             <Header as='h4'>
                                                 <Header.Content>
-                                                    {item.lastUpdate}
+                                                    {item.updated_at}
                                                 </Header.Content>
                                             </Header>                         
                                         </Table.Cell>

@@ -1,58 +1,66 @@
 import React from 'react';
-import {Menu, Button } from 'semantic-ui-react'
+import {Menu, Button, Segment } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
+
+function url() {
+    return window.location.href.replace(/(.+\w\/)(.+)/,"/$2");
+}
 
 class MainMenu extends React.Component{
     constructor(props){
         super(props);
+
     }
-    state = { activeItem: 'home' }
+    state = { activeItem: '' }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
+    componentWillUpdate(){
+        
+    }
+
     render(){
         const { activeItem } = this.state
-        return <Menu attached="bottom" stackable  color="black"  inverted size="massive" >
+        console.log(url())
+        
+
+        return  <Segment inverted>
+                    <Menu inverted pointing secondary size="massive">
                     <Menu.Item header>WeMirror</Menu.Item>
-                    <Menu.Item
-                        name='home'
-                        active={activeItem === 'home'}
-                        onClick={this.handleItemClick}
-                        as={Link} to="/"
-                    />
-                    <Menu.Item
-                        name='tasks'
-                        active={activeItem === 'tasks'}
-                        onClick={this.handleItemClick}
-                        as={Link} to="/tasks"
-                    />
-                    <Menu.Item
-                        name='settings'
-                        active={activeItem === 'settings'}
-                        onClick={this.handleItemClick}
-                        as={Link} to="/settings"
-                    />
-                    <Menu.Item
-                        name='users'
-                        active={activeItem === 'users'}
-                        onClick={this.handleItemClick}
-                        as={Link} to="/users"
-                    />
-                    <Menu.Item
-                        name='log'
-                        active={activeItem === 'log'}
-                        onClick={this.handleItemClick}
-                        as={Link} to="/log"
-                    />
-                    <Menu.Menu position='right'>
                         <Menu.Item
-                            name='authorize'
-                            active={activeItem === 'authorize'}
+                            name='home'
+                            active={url() === "http://localhost:3000/"}
                             onClick={this.handleItemClick}
+                            as={Link} to="/"
                         />
-                    </Menu.Menu>
-            </Menu>  
+                        <Menu.Item
+                            name='settings'
+                            active={url() === "/settings"}
+                            onClick={this.handleItemClick}
+                            as={Link} to="/settings"
+                        />
+                        <Menu.Item
+                            name='users'
+                            active={url() === "/users"}
+                            onClick={this.handleItemClick}
+                            as={Link} to="/users"
+                        />
+                        <Menu.Item
+                            name='tasks'
+                            active={url() === "/tasks"}
+                            onClick={this.handleItemClick}
+                            as={Link} to="/tasks"
+                        />
+                        <Menu.Menu position='right'>
+                            <Menu.Item
+                                name='authorize'
+                                active={activeItem === 'authorize'}
+                                onClick={this.handleItemClick}
+                            />
+                        </Menu.Menu>
+                    </Menu>  
+                </Segment>
     }
 }
 
