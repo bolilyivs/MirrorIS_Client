@@ -13,7 +13,7 @@ class HomePage extends React.Component{
     constructor(props){
         super(props)
         //this.state = { data: JSON.parse(str) };
-        this.state = {data: []}
+        this.state = { data: [] }
     }
 
     componentDidMount() {
@@ -23,17 +23,16 @@ class HomePage extends React.Component{
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa('root' + ":" + '123'),
                     }
-                }
-                )
-                .then((response) => {
-                    var data = response.data;
-                    this.setState({ data });
-                },
-                (error) => {
-                    console.log(error.data);
-                }
-            );
-      }
+            })
+            .then((response) => {
+                var data = response.data;
+                this.setState({ data });
+            },
+            (error) => {
+                console.log(error.data);
+            }
+        );
+    }
 
     render(){
         console.log(this.state.data);
