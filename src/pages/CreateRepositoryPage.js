@@ -132,9 +132,6 @@ class CreateRepositoryPage extends React.Component{
 
             <Button style={{width: "200px"}} primary size="big" content='Create' onClick={this.handleSubmit}   
             disabled={ !this.state.name || !this.state.mirror_url || !this.state.mirror_location || !this.state.mirror_type || !this.state.schedule_status}/>
-            {/* <Button primary size="big" content='Run task' onClick={this.handleSubmit}/>
-            <Button negative size="big" content='Remove task' onClick={this.handleSubmit}/>
-            <Button negative size="big" content='Reset' onClick={this.handleSubmit}/>        */}
         </Grid>
        
     }

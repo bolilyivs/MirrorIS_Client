@@ -21,17 +21,25 @@ export default class Query {
       return 'http://127.0.0.1:5000/user/' +  id  +'/delete';
     }
 
+    static repositoryInfoGET(id){
+      return 'http://127.0.0.1:5000/repository/' + id;
+    }
     static repositoryDeleteDELETE(id){
       return 'http://127.0.0.1:5000/repository/' +  id  +'/delete';
     }
     static repositoryUpdatePUT(id){
       return 'http://127.0.0.1:5000/repository/' +  id  +'/update';
     }
+    static repositoryRunGET(id){
+      return 'http://127.0.0.1:5000/repository/' + id + '/run';
+    }
+    static repositoryResetGET(id){
+      return 'http://127.0.0.1:5000/repository/' + id + '/reset';
+    }
 
     static taskDetailGET(id) {
       return 'http://127.0.0.1:5000/task/' + id;
     }
-
 
   }
 

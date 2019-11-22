@@ -33,9 +33,9 @@ class App extends React.Component{
               <Route exact path="/create_repository" render = { props => <CreateRepositoryPage />}/>  
               <Route exact path="/update_repository/:id" render = { props => <UpdateRepositoryPage id={props.match.params.id}/>}/>  
               <Route exact path="/users" render = { props => <UsersPage />}/>  
-              <Route exact path="/update_users/:id" render = { props => <UpdateUsersPage  id={props.match.params.id}/>}/>  
+              <Route exact path="/update_users/:id" render = { props => <UpdateUsersPage id={props.match.params.id}/>}/>  
               <Route exact path="/tasks" render = { props => <TasksPage />}/>  
-              <Route exact path="/detail_task/:id" render = { props => <DetailTaskPage  id={props.match.params.id}/>}/>  
+              <Route exact path="/detail_task/:id" render = { props => <DetailTaskPage id={props.match.params.id}/>}/>  
               <Route exact path="/create_users" render = { props => <CreateUsersPage />}/>  
           </Switch>    
       </div>

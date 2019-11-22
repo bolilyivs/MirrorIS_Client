@@ -1,12 +1,12 @@
 import React from 'react';
-import {Grid, Button, Input, Segment, Form, Select, Message} from 'semantic-ui-react';
+import {Grid, Button, Input, Modal, Icon, Form, Select, Message, Dropdown} from 'semantic-ui-react';
 import { Redirect } from 'react-router'
 import axios from 'axios';
 import Query from '../config.js'
 
 const type = [
-    { key: '0', text: 'User', value: '0' },
-    { key: '1', text: 'Admin', value: '1' }
+    { key: 0, text: 'User', value: 0 },
+    { key: 1, text: 'Admin', value:  1 }
   ]
 
 class UpdateUsersPage extends React.Component{
@@ -14,9 +14,10 @@ class UpdateUsersPage extends React.Component{
     constructor(props){
         super(props)
         this.id = this.props.id;
-        this.state = { data: [], username: '', password: '', password2: '', group: '', check: false, redirect: false
+        this.state = { data: [], username: '', password: '', password2: '', group: '', check: false, 
+        redirect: false, openDel: false, openUpdt: false
         }
-
+        
         axios.get(
             Query.userInfoGET(this.id),
             {   headers: {
@@ -28,19 +29,26 @@ class UpdateUsersPage extends React.Component{
                 .then((response) => {
                     var data = response.data;
                     this.setState({ data });
+                    this.setState({ username: data.username, group: data.group})
                     console.log(response.data);
                 },
                 (error) => {
                     console.log(error.data);
                 }
-            );
+            );           
     }
+
+    handleOpenDel = () => {this.setState({ openDel: true })}
+
+    handleOpenUdpt = () => {this.setState({ openUpdt: true })}
+
+    handleCancel = () => {this.setState({ openDel: false, openUpdt: false })}
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
     handleUpdate = () => {
         if(this.state.password2 !== this.state.password){          
-            this.setState({check: true});
+            this.setState({check: true, openUpdt: false});
             return
         }else{
             this.setState({check: false});
@@ -56,8 +64,8 @@ class UpdateUsersPage extends React.Component{
             }
         ).then(res => {     
             if(res.data === "ok"){
-                this.setState({ redirect: true })
-            }    
+                this.setState({ redirect: true})
+            }
             console.log(res.data);
       })
 
@@ -79,14 +87,16 @@ class UpdateUsersPage extends React.Component{
     }
 
     render(){
-        const {data, username, password, password2, group, redirect} = this.state
-        
+        const {username, password, password2, group, redirect, openDel, openUpdt} = this.state
+
+        console.log(group)
+
         if (redirect) {
             return <Redirect to='/users'/>;
         }
-
+        
         return <Grid centered stackable columns={3}>
-            <Grid.Row><h1>{this.id}</h1></Grid.Row>
+            <Grid.Row><h1>Update User</h1></Grid.Row>
             <Grid.Row> 
             { this.state.check && (
                <Message size="big" color="red">
@@ -100,7 +110,7 @@ class UpdateUsersPage extends React.Component{
                 <Grid.Column>
                     <Form size='big'>       
                         <Form.Field required>
-                            <Input defaultValue={data.username} label={{icon: "user", content: "User Name"}} placeholder='Name' name='username' value={username} onChange={this.handleChange} />
+                            <Input defaultValue={username} label={{icon: "user", content: "User Name"}} placeholder='Name' name='username' value={username} onChange={this.handleChange} />
                         </Form.Field>
                         <Form.Field required>
                             <Input label={{icon: "key", content: "Password"}} type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
@@ -108,25 +118,58 @@ class UpdateUsersPage extends React.Component{
                         <Form.Field required>
                             <Input label={{icon: "key", content: "Confirm password"}} type="password" placeholder='Password' name='password2' value={password2} onChange={this.handleChange}/>
                         </Form.Field>
-                        <Form.Field
-                            required
-                            control={Select}
-                            options={type}
-                            placeholder='Group'
-                            name='group'
-                            value={group} 
-                            onChange={this.handleChange}
-                            defaultValue={data.group}
-                        />
-
+                        <Form.Field required>
+                            <Dropdown 
+                                options={type}  
+                                selection
+                                placeholder='Group'
+                                name='group'  
+                                value={group} 
+                                onChange={this.handleChange}
+                            />
+                        </Form.Field>
                     </Form>                         
-                    </Grid.Column> 
+                </Grid.Column> 
             <Grid.Column>  
             </Grid.Column>
 
-            <Button primary size="big" content='Udpate' onClick={this.handleUpdate}  
-            disabled={ !this.state.username || !this.state.password || !this.state.password2 || !this.state.group}/>  
-            <Button negative size="big" content='Delete' onClick={this.handleDelete} /> 
+            <Button primary size="big" content='Udpate' onClick={this.handleOpenUdpt}  
+                disabled={ !this.state.username || !this.state.password || !this.state.password2}/>  
+            <Modal open={openUpdt} size='mini'>
+                <Modal.Content>
+                    <p style = {{fontSize: 20}}>
+                        Update this user?            
+                    </p>   
+                </Modal.Content>
+                <Modal.Actions>
+                <Button negative onClick={this.handleCancel}>No</Button>
+                <Button
+                    positive
+                    icon='checkmark'
+                    labelPosition='right'
+                    content='Yes'
+                    onClick={this.handleUpdate} 
+                />
+                </Modal.Actions>
+            </Modal>              
+            <Button negative size="big" content='Delete' onClick={this.handleOpenDel}/> 
+            <Modal open={openDel} size='mini'>
+                <Modal.Content>
+                    <p style = {{fontSize: 20}}>
+                        Delete this user?            
+                    </p>   
+                </Modal.Content>
+                <Modal.Actions>
+                <Button negative onClick={this.handleCancel}>No</Button>
+                <Button
+                    positive
+                    icon='checkmark'
+                    labelPosition='right'
+                    content='Yes'
+                    onClick={this.handleDelete}
+                />
+                </Modal.Actions>
+            </Modal>              
         </Grid>
        
     }

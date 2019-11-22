@@ -5,8 +5,8 @@ import axios from 'axios';
 import Query from '../config.js'
 
 const type = [
-    { key: '0', text: 'User', value: '0' },
-    { key: '1', text: 'Admin', value: '1' }
+    { key: 0, text: 'User', value: 0 },
+    { key: 1, text: 'Admin', value: 1 }
   ]
 
 class CreateUsersPage extends React.Component{
