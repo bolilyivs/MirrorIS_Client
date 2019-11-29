@@ -1,44 +1,51 @@
 
 export default class Query {
 
-    static repositoryGET = 'http://127.0.0.1:5000/repository';
+    static serverName = "http://127.0.0.1:5000"
 
-    static taskGET = 'http://127.0.0.1:5000/task';
+    static repositoryGET = Query.serverName + '/repository';
 
-    static userGET = 'http://127.0.0.1:5000/user';
+    static taskGET = Query.serverName + '/task';
 
-    static createRepositoryPOST = `http://127.0.0.1:5000/repository/create`;
+    static userGET = Query.serverName + '/user';
+
+    static createRepositoryPOST = Query.serverName + `/repository/create`;
     
-    static createUserPOST = `http://127.0.0.1:5000/user/create`;
+    static createUserPOST = Query.serverName + `/user/create`;
     
     static userInfoGET(id){
-      return 'http://127.0.0.1:5000/user/' + id;
+      return Query.serverName + '/user/' + id;
     }
     static userUpdatePUT(id){
-      return 'http://127.0.0.1:5000/user/' +  id  +'/update';
+      return Query.serverName + '/user/' +  id  +'/update';
     }
     static userDeleteDELETE(id){
-      return 'http://127.0.0.1:5000/user/' +  id  +'/delete';
+      return Query.serverName + '/user/' +  id  +'/delete';
     }
 
     static repositoryInfoGET(id){
-      return 'http://127.0.0.1:5000/repository/' + id;
+      return Query.serverName + '/repository/' + id;
     }
     static repositoryDeleteDELETE(id){
-      return 'http://127.0.0.1:5000/repository/' +  id  +'/delete';
+      return Query.serverName + '/repository/' +  id  +'/delete';
     }
     static repositoryUpdatePUT(id){
-      return 'http://127.0.0.1:5000/repository/' +  id  +'/update';
+      return Query.serverName + '/repository/' +  id  +'/update';
     }
     static repositoryRunGET(id){
-      return 'http://127.0.0.1:5000/repository/' + id + '/run';
+      return Query.serverName + '/repository/' + id + '/run';
     }
     static repositoryResetGET(id){
-      return 'http://127.0.0.1:5000/repository/' + id + '/reset';
+      return Query.serverName + '/repository/' + id + '/reset';
     }
 
     static taskDetailGET(id) {
-      return 'http://127.0.0.1:5000/task/' + id;
+      return Query.serverName + '/task/' + id;
+    }
+
+    static poolGET(){
+      console.log(Query.serverName + '/zpool')
+      return Query.serverName + '/zpool';
     }
 
   }

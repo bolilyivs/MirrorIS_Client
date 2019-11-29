@@ -16,8 +16,19 @@ const type = [
 class CreateRepositoryPage extends React.Component{
     constructor(props){
         super(props)
+
+        axios.get(Query.poolGET(), {   headers: {
+            'Content-Type': 'application/json',
+            'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+            }
+    }).then(res => {     
+            var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
+            this.setState({ pool_data:  data});
+            console.log(res.data);
+      })
+
         this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
-        mirror_location: '', schedule_number: '', mirror_type: '',
+        mirror_location: '', schedule_number: '', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
         schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false
         }
     }
@@ -25,7 +36,7 @@ class CreateRepositoryPage extends React.Component{
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
     handleSubmit = () => {
-        var { name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run,  schedule_number, 
+        var { name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status, schedule_run,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year} = this.state
         if(!this.state.schedule_number) { schedule_number = 1 }
         if(!this.state.schedule_minute) { schedule_minute = 0 }
@@ -33,10 +44,10 @@ class CreateRepositoryPage extends React.Component{
         if(!this.state.schedule_day) { schedule_day = 0 }
         if(!this.state.schedule_month) { schedule_month = 0 }
         if(!this.state.schedule_year) { schedule_year = 0 }
-        console.log(JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+        console.log(JSON.stringify({ name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11));
 
-        axios.post(Query.createRepositoryPOST, JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run, schedule_number, 
+        axios.post(Query.createRepositoryPOST, JSON.stringify({ name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status, schedule_run, schedule_number, 
                                                                             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +63,7 @@ class CreateRepositoryPage extends React.Component{
     }
 
     render(){
-        const { name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+        const { name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year, redirect} = this.state
         
         if (redirect) {
@@ -76,6 +87,18 @@ class CreateRepositoryPage extends React.Component{
                         <Form.Field required>
                             <Input label='Repository Name' placeholder='Name' name='name' value={name} onChange={this.handleChange}/>
                         </Form.Field>
+
+                        <Form.Field
+                            required
+                            control={Select}
+                            options={this.state.pool_data}
+                            placeholder='Pool'
+                            name='mirror_zpool'
+                            value={this.state.mirror_zpool} 
+                            onChange={this.handleChange}
+                        />
+
+
                         <Form.Field required>
                             <Input label='MirrorLocation' placeholder='URL' name='mirror_location' value={mirror_location} onChange={this.handleChange}/>
                         </Form.Field>
@@ -101,6 +124,10 @@ class CreateRepositoryPage extends React.Component{
                             value={schedule_status} 
                             onChange={this.handleChange}
                         /> 
+
+                        <Form.Field>
+                            <Input label='Arguments' defaultValue={"-vaHz"} placeholder='Arguments' name='mirror_args' value={mirror_args} onChange={this.handleChange}/>
+                        </Form.Field>
 
                         <Form.Field>
                             <label>Shedule: </label>

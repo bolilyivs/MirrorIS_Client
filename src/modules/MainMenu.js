@@ -29,16 +29,10 @@ class MainMenu extends React.Component{
                     <Menu inverted pointing secondary size="massive">
                     <Menu.Item header>WeMirror</Menu.Item>
                         <Menu.Item
-                            name='home'
+                            name='Repositories'
                             active={url() === "http://localhost:3000/"}
                             onClick={this.handleItemClick}
                             as={Link} to="/"
-                        />
-                        <Menu.Item
-                            name='settings'
-                            active={url() === "/settings"}
-                            onClick={this.handleItemClick}
-                            as={Link} to="/settings"
                         />
                         <Menu.Item
                             name='users'

@@ -16,9 +16,20 @@ const type = [
 class UpdateRepositoryPage extends React.Component{
     constructor(props){
         super(props)
+        axios.get(Query.poolGET(), {   headers: {
+            'Content-Type': 'application/json',
+            'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+            }
+    }).then(res => {     
+            var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
+            this.setState({ pool_data:  data});
+            console.log(res.data);
+      })
+
+
         this.id = this.props.id;
-        this.state = { data:[], name: '', mirror_url: '', schedule_status: '', schedule_run: false,
-        mirror_location: '', schedule_number: '', mirror_type: '',
+        this.state = { data:[], name: '', mirror_zpool: '', mirror_url: '', schedule_status: '', schedule_run: false,
+        mirror_location: '', schedule_number: '', mirror_type: '', mirror_args: '',
         schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', 
         redirect: false, openDel: false, openUpdt: false, openRun: false, openReset: false
         }
@@ -36,9 +47,11 @@ class UpdateRepositoryPage extends React.Component{
                     this.setState({ data });
                     this.setState({ 
                         name: data.name, 
+                        mirror_zpool: data.mirror_zpool,
                         mirror_location: data.mirror_location, 
                         mirror_url: data.mirror_url,
                         mirror_type: data.mirror_type, 
+                        mirror_args: data.mirror_args,
                         schedule_status: data.schedule_status,
                         schedule_number: data.schedule_number,
                         schedule_minute: data.schedule_minute, 
@@ -69,7 +82,7 @@ class UpdateRepositoryPage extends React.Component{
     handleCancel = () => {this.setState({ openDel: false, openUpdt: false, openRun: false, openReset: false })}
 
     handleUpdate= () => {
-        var { name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run,  schedule_number, 
+        var { name, mirror_url, mirror_zpool, mirror_location, mirror_type, mirror_args, schedule_status, schedule_run,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year} = this.state
         if(!this.state.schedule_number) { schedule_number = 1 }
         if(!this.state.schedule_minute) { schedule_minute = 0 }
@@ -77,10 +90,10 @@ class UpdateRepositoryPage extends React.Component{
         if(!this.state.schedule_day) { schedule_day = 0 }
         if(!this.state.schedule_month) { schedule_month = 0 }
         if(!this.state.schedule_year) { schedule_year = 0 }
-        console.log(JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+        console.log(JSON.stringify({ name, mirror_url, mirror_zpool, mirror_location, mirror_type, mirror_args, schedule_status,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11));
 
-        axios.put(Query.repositoryUpdatePUT(this.id), JSON.stringify({ name, mirror_url, mirror_location, mirror_type, schedule_status, schedule_run, schedule_number, 
+        axios.put(Query.repositoryUpdatePUT(this.id), JSON.stringify({ name, mirror_zpool, mirror_url, mirror_location, mirror_type, mirror_args, schedule_status, schedule_run, schedule_number, 
                                                                             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
             headers: {
                 'Content-Type': 'application/json',
@@ -153,7 +166,7 @@ class UpdateRepositoryPage extends React.Component{
     }
 
     render(){
-        const { name, mirror_url, mirror_location, mirror_type, schedule_status,  schedule_number, 
+        const { name, mirror_zpool, mirror_url, mirror_location, mirror_type,mirror_args, schedule_status,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year, 
             redirect, openDel, openUpdt, openRun, openReset} = this.state
         
@@ -177,6 +190,18 @@ class UpdateRepositoryPage extends React.Component{
                         <Form.Field required>
                             <Input defaultValue={name} label='Repository Name' placeholder='Name' name='name' value={name} onChange={this.handleChange}/>
                         </Form.Field>
+
+                        <Form.Field
+                            required
+                            control={Select}
+                            options={this.state.pool_data}
+                            placeholder='Pool'
+                            name='mirror_zpool'
+                            value={mirror_zpool} 
+                            onChange={this.handleChange}
+                        />
+
+
                         <Form.Field required>
                             <Input defaultValue={mirror_location} label='MirrorLocation' placeholder='URL' name='mirror_location' value={mirror_location} onChange={this.handleChange}/>
                         </Form.Field>
@@ -205,6 +230,12 @@ class UpdateRepositoryPage extends React.Component{
                                 onChange={this.handleChange}
                             />
                         </Form.Field>
+
+                        <Form.Field>
+                            <Input label='Arguments' defaultValue={"-vaHz"} placeholder='Arguments' name='mirror_args' value={mirror_args} onChange={this.handleChange}/>
+                        </Form.Field>
+
+
                         <Form.Field>
                             <label>Shedule: </label>
                         </Form.Field> 
