@@ -2,7 +2,7 @@ import React from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import {Switch, Route} from 'react-router-dom';
 import MainMenu from "./modules/MainMenu";
-import HomePage from "./pages/HomePage";
+import RepositoryPage from "./pages/RepositoryPage";
 import SettingsPage from "./pages/SettingsPage";
 import CreateRepositoryPage from "./pages/CreateRepositoryPage";
 import UsersPage from "./pages/UsersPage";
@@ -12,6 +12,8 @@ import CreateUsersPage from './pages/CreateUsersPage';
 import UpdateRepositoryPage from './pages/UpdateRepositoryPage';
 import DetailTaskPage from './pages/DetailTaskPage';
 import './App.css';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage'
 
 
 class App extends React.Component{
@@ -27,8 +29,10 @@ class App extends React.Component{
     return (
       <div className="App">
           <MainMenu />  
-          <Switch>
+          <Switch>            
               <Route exact path="/" render = { props => <HomePage />}/>  
+              <Route exact path="/repository" render = { props => <RepositoryPage />}/>  
+              <Route exact path="/login" render = { props => <LoginPage />}/>  
               <Route exact path="/settings" render = { props => <SettingsPage />}/>  
               <Route exact path="/create_repository" render = { props => <CreateRepositoryPage />}/>  
               <Route exact path="/update_repository/:id" render = { props => <UpdateRepositoryPage id={props.match.params.id}/>}/>  

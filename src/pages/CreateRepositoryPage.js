@@ -3,6 +3,7 @@ import {Grid, Button, Input, Dropdown, Form, Select, GridColumn} from 'semantic-
 import axios from 'axios';
 import { Redirect } from 'react-router'
 import Query from '../config.js'
+import Cookies from 'universal-cookie';
 
 const options = [
     { key: 'false', text: 'Inactive', value: 'false' },
@@ -16,21 +17,26 @@ const type = [
 class CreateRepositoryPage extends React.Component{
     constructor(props){
         super(props)
-
-        axios.get(Query.poolGET(), {   headers: {
-            'Content-Type': 'application/json',
-            'authorization': 'Basic ' + btoa('root' + ":" + '123'),
-            }
-    }).then(res => {     
-            var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
-            this.setState({ pool_data:  data});
-            console.log(res.data);
-      })
-
+        
         this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
         mirror_location: '', schedule_number: '', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
-        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false
+        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false, redirectFail: false
         }
+        
+        axios.get(
+            Query.poolGET(), {   
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                }
+            }).then(res => {     
+                var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
+                this.setState({ pool_data:  data});
+                console.log(res.data);
+            },(error) => {
+                this.setState({ redirectFail: true});
+                console.log(error.data);
+        })
     }
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
@@ -47,18 +53,21 @@ class CreateRepositoryPage extends React.Component{
         console.log(JSON.stringify({ name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status,  schedule_number, 
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11));
 
-        axios.post(Query.createRepositoryPOST, JSON.stringify({ name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status, schedule_run, schedule_number, 
-                                                                            schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
+        axios.post(Query.createRepositoryPOST, JSON.stringify({ name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status, schedule_run, schedule_number,                                                                        schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
         ).then(res => {     
             if(res.data === "ok"){
                 this.setState({ redirect: true })
+                
             }    
             console.log(res.data);
+        },(error) => {
+            this.setState({ redirectFail: true});
+            console.log(error.data);
       })
     }
 
@@ -67,7 +76,7 @@ class CreateRepositoryPage extends React.Component{
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year, redirect} = this.state
         
         if (redirect) {
-            return <Redirect to='/'/>;
+            return <Redirect to='/repository'/>;
         }
 
         return <Grid centered stackable columns={3}>

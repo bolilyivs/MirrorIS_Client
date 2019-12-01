@@ -3,21 +3,20 @@ import {Grid, Table, Menu, Icon, Button, Header, Image} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import Query from '../config.js'
-
-var str = '[ { "id" : 1, "username": "John", "group": 1 }, { "id" : 2, "username": "Ben", "group": 0 }, { "id" : 3, "username": "Tom", "group": 0 } ]';
-//var str = '[ { "id": 1, "lastUpdate": "29-10-2019", "name": "Ubuntu1", "status": 0, "user": { "group": 0, "id": 1, "username": "Jack01" } }, { "id": 2, "lastUpdate": "29-10-2019", "name": "OpenSuse", "status": 1, "user": { "group": 0, "id": 2, "username": "john02" } }, { "id": 3, "lastUpdate": "29-10-2019", "name": "CentOS", "status": 2, "user": { "group": 0, "id": 3, "username": "Bred03" } } ]';
+import Cookies from 'universal-cookie';
+import { Redirect } from 'react-router'
 
 class UsersPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { data: [] };
+        this.state = { data: [], redirectFail: false };
     }
     componentDidMount() {
         axios.get(
             Query.userGET,
             {   headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                     }
                 }
                 )
@@ -26,6 +25,7 @@ class UsersPage extends React.Component{
                     this.setState({ data });
                 },
                 (error) => {
+                    this.setState({ redirectFail: true});
                     console.log(error.data);
                 }
             );
@@ -33,6 +33,11 @@ class UsersPage extends React.Component{
 
     render(){
         console.log(this.state.data);
+
+        if (this.state.redirectFail) {
+            return <Redirect to='/login'/>;
+        }
+
         return <Grid centered stackable columns={2}>
                     <Grid.Row>
                         <Grid.Column width={10}>

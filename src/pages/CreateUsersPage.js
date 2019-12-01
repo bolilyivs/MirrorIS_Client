@@ -3,6 +3,7 @@ import {Grid, Button, Input, Segment, Form, Select, Message} from 'semantic-ui-r
 import { Redirect } from 'react-router'
 import axios from 'axios';
 import Query from '../config.js'
+import Cookies from 'universal-cookie';
 
 const type = [
     { key: '0', text: 'User', value: '0' },
@@ -12,7 +13,7 @@ const type = [
 class CreateUsersPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { username: '', password: '', password2: '', group: '', check: false, redirect: false
+        this.state = { username: '', password: '', password2: '', group: '', check: false, redirect: false, redirectFail: false
         }
     }
 
@@ -31,7 +32,7 @@ class CreateUsersPage extends React.Component{
         axios.post(Query.createUserPOST, JSON.stringify({ username, password, group }, null, 3), {
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
         ).then(res => {     
@@ -39,6 +40,9 @@ class CreateUsersPage extends React.Component{
                 this.setState({ redirect: true })
             }    
             console.log(res.data);
+        },(error) => {
+            this.setState({ redirectFail: true});
+            console.log(error.data);
       })
 
     }
@@ -48,6 +52,10 @@ class CreateUsersPage extends React.Component{
         
         if (redirect) {
             return <Redirect to='/users'/>;
+        }
+
+        if (this.state.redirectFail) {
+            return <Redirect to='/login'/>;
         }
 
         return <Grid centered stackable columns={3}>

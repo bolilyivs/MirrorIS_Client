@@ -3,6 +3,7 @@ import {Grid, Button, Input, Modal, Icon, Form, Select, Message, Dropdown} from 
 import { Redirect } from 'react-router'
 import axios from 'axios';
 import Query from '../config.js'
+import Cookies from 'universal-cookie';
 
 const type = [
     { key: 0, text: 'User', value: 0 },
@@ -15,14 +16,14 @@ class UpdateUsersPage extends React.Component{
         super(props)
         this.id = this.props.id;
         this.state = { data: [], username: '', password: '', password2: '', group: '', check: false, 
-        redirect: false, openDel: false, openUpdt: false
+        redirect: false, redirectFail: false, openDel: false, openUpdt: false
         }
         
         axios.get(
             Query.userInfoGET(this.id),
             {   headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                     }
                 }
                 )
@@ -31,8 +32,8 @@ class UpdateUsersPage extends React.Component{
                     this.setState({ data });
                     this.setState({ username: data.username, group: data.group})
                     console.log(response.data);
-                },
-                (error) => {
+                },(error) => {
+                    this.setState({ redirectFail: true});
                     console.log(error.data);
                 }
             );           
@@ -59,7 +60,7 @@ class UpdateUsersPage extends React.Component{
         axios.put(Query.userUpdatePUT(this.id), JSON.stringify({ username, password, group }, null, 3), {
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
         ).then(res => {     
@@ -67,6 +68,9 @@ class UpdateUsersPage extends React.Component{
                 this.setState({ redirect: true})
             }
             console.log(res.data);
+        },(error) => {
+            this.setState({ redirectFail: true});
+            console.log(error.data);
       })
 
     }
@@ -75,7 +79,7 @@ class UpdateUsersPage extends React.Component{
         axios.delete(Query.userDeleteDELETE(this.id),{
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
         ).then(res => {     
@@ -83,6 +87,9 @@ class UpdateUsersPage extends React.Component{
                 this.setState({ redirect: true })
             }    
             console.log(res.data);
+        },(error) => {
+            this.setState({ redirectFail: true});
+            console.log(error.data);
       })
     }
 
@@ -93,6 +100,10 @@ class UpdateUsersPage extends React.Component{
 
         if (redirect) {
             return <Redirect to='/users'/>;
+        }
+        
+        if (this.state.redirectFail) {
+            return <Redirect to='/login'/>;
         }
         
         return <Grid centered stackable columns={3}>

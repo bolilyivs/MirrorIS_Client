@@ -3,6 +3,7 @@ import {Grid, Button, Input, Modal, Form, Select, Dropdown} from 'semantic-ui-re
 import axios from 'axios';
 import { Redirect } from 'react-router'
 import Query from '../config.js'
+import Cookies from 'universal-cookie';
 
 const options = [
     { key: false, text: 'Inactive', value: false },
@@ -16,29 +17,33 @@ const type = [
 class UpdateRepositoryPage extends React.Component{
     constructor(props){
         super(props)
-        axios.get(Query.poolGET(), {   headers: {
-            'Content-Type': 'application/json',
-            'authorization': 'Basic ' + btoa('root' + ":" + '123'),
-            }
-    }).then(res => {     
-            var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
-            this.setState({ pool_data:  data});
-            console.log(res.data);
-      })
-
 
         this.id = this.props.id;
         this.state = { data:[], name: '', mirror_zpool: '', mirror_url: '', schedule_status: '', schedule_run: false,
         mirror_location: '', schedule_number: '', mirror_type: '', mirror_args: '',
         schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', 
-        redirect: false, openDel: false, openUpdt: false, openRun: false, openReset: false
+        redirect: false, redirectFail: false, openDel: false, openUpdt: false, openRun: false, openReset: false
         }
+
+        axios.get(Query.poolGET(), {   
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                }
+            }).then(res => {     
+                var data = res.data.map((pool, index) => ( { key: index, text: pool, value: pool }));
+                this.setState({ pool_data:  data});
+                console.log(res.data);
+            },(error) => {
+                this.setState({ redirectFail: true});
+                console.log(error.data);
+        })
 
         axios.get(
             Query.repositoryInfoGET(this.id),
             {   headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                     }
                 }
                 )
@@ -61,8 +66,8 @@ class UpdateRepositoryPage extends React.Component{
                         schedule_year: data.schedule_year,   
                     });
                     console.log(response.data);
-                },
-                (error) => {
+                },(error) => {
+                    this.setState({ redirectFail: true});
                     console.log(error.data);
                 }
             );          
@@ -97,22 +102,25 @@ class UpdateRepositoryPage extends React.Component{
                                                                             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year }, null, 11), {
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
-        ).then(res => {
-            if(res.data === "ok"){
-                this.setState({ redirect: true })
-            }    
-            console.log(res.data);
-      })
+            ).then(res => {
+                if(res.data === "ok"){
+                    this.setState({ redirect: true })
+                }    
+                console.log(res.data);
+            },(error) => {
+                this.setState({ redirectFail: true});
+                console.log(error.data);
+        })
     }
 
     handleDelete = () => {
         axios.delete(Query.repositoryDeleteDELETE(this.id),{
             headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
         ).then(res => {     
@@ -120,6 +128,9 @@ class UpdateRepositoryPage extends React.Component{
                 this.setState({ redirect: true })
             }    
             console.log(res.data);
+        },(error) => {
+            this.setState({ redirectFail: true});
+            console.log(error.data);
       })
     }
     
@@ -128,7 +139,7 @@ class UpdateRepositoryPage extends React.Component{
             Query.repositoryRunGET(this.id),
             {   headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                     }
                 }
                 )
@@ -137,8 +148,8 @@ class UpdateRepositoryPage extends React.Component{
                         this.setState({ redirect: true })
                     }    
                     console.log(res.data);
-                },
-                (error) => {
+                },(error) => {
+                    this.setState({ redirectFail: true});
                     console.log(error.data);
                 }
             );          
@@ -149,7 +160,7 @@ class UpdateRepositoryPage extends React.Component{
         Query.repositoryResetGET(this.id),
         {   headers: {
                 'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa('root' + ":" + '123'),
+                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                 }
             }
             )
@@ -158,8 +169,8 @@ class UpdateRepositoryPage extends React.Component{
                     this.setState({ redirect: true })
                 }    
                 console.log(res.data);
-            },
-            (error) => {
+            },(error) => {
+                this.setState({ redirectFail: true});
                 console.log(error.data);
             }
         );          
@@ -172,6 +183,10 @@ class UpdateRepositoryPage extends React.Component{
         
         if (redirect) {
             return <Redirect to='/'/>;
+        }
+
+        if (this.state.redirectFail) {
+            return <Redirect to='/login'/>;
         }
 
         return <Grid centered stackable columns={3}>
