@@ -131,33 +131,6 @@ class RepositoryPage extends React.Component{
                                     
                                 ))
                             }
-                            {/* <Table.Row>
-                                <Table.Cell>OpenSuseRepo</Table.Cell>
-                                <Table.Cell> 
-                                    <Header as='h4' image>
-                                        <Image src='https://react.semantic-ui.com/images/avatar/small/matthew.png' rounded size='mini' />
-                                        <Header.Content>
-                                            John Boo
-                                        </Header.Content>
-                                    </Header>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <Header as='h4' image>
-                                        <Header.Content>
-                                            Run
-                                        <Header.Subheader>80%</Header.Subheader>
-                                        </Header.Content>
-                                    </Header>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <Header as='h4' image>
-                                        <Header.Content>
-                                        15 Sep, 8:56 AM
-                                        <Header.Subheader>(2013)</Header.Subheader>
-                                        </Header.Content>
-                                    </Header>
-                                </Table.Cell>
-                            </Table.Row>*/}
                         </Table.Body>
 
                         <Table.Footer>
