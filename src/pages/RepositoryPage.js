@@ -6,36 +6,30 @@ import Query from '../config.js'
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router'
 
-class TasksPage extends React.Component{
+class RepositoryPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = {data: [], redirectFail: false}
-        console.log(new Cookies().get('username'));
-        console.log(new Cookies().get('password'));
-        if(new Cookies().get('test') == null){
-            console.log("12345");
-        }
+        this.state = { data: [], redirectFail: false }
     }
 
     componentDidMount() {
         axios.get(
-            Query.taskGET,
+            Query.repositoryGET,
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
                     }
-                }
-                )
-                .then((response) => {
-                    var data = response.data;
-                    this.setState({ data });
-                },
-                (error) => {
-                    this.setState({ redirectFail: true});
-                    console.log(error.data);
-                }
-            );
-      }
+            })
+            .then((response) => {
+                var data = response.data;
+                this.setState({ data });
+            },
+            (error) => {
+                this.setState({ redirectFail: true});
+                console.log(error.data);
+            }
+        );
+    }
 
     render(){
         console.log(this.state.data);
@@ -47,13 +41,18 @@ class TasksPage extends React.Component{
         return <Grid centered stackable columns={2}>
             <Grid.Row>
                 <Grid.Column width={10}>
-                    <h1>Tasks</h1>
+                    <h1>Repositories</h1>
                 </Grid.Column>
+                <Grid.Column width={10}>
+                    <Link to="/create_repository">
+                        <Button primary floated="right" size="big" style={{width: "200px"}}>Add Repository</Button>
+                    </Link> 
+                </Grid.Column>    
             </Grid.Row>
           
             <Grid.Row>
                 <Grid.Column width={10}>
-                    <Table singleLine fixed>
+                    <Table singleLine>
                         <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>
@@ -66,21 +65,21 @@ class TasksPage extends React.Component{
                             <Table.HeaderCell>
                                 <Header as='h3'>
                                     <Header.Content>
-                                        Message
+                                        Master
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Header as='h3'>
                                     <Header.Content>
-                                        User Name
+                                        Active
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Header as='h3'>
                                     <Header.Content>
-                                        Date
+                                        Last Run Date
                                     </Header.Content>
                                 </Header>   
                             </Table.HeaderCell>
@@ -94,19 +93,9 @@ class TasksPage extends React.Component{
                                         <Table.Cell>
                                             <Header as='h4'>
                                                 <Header.Content>
-                                                    <Link to={`/detail_task/${item.id}`}> { item.repository } </Link>                                      
+                                                    <Link to={`/update_repository/${item.id}`}> { item.name } </Link>                             
                                                 </Header.Content>
                                             </Header>     
-                                        </Table.Cell>
-                                        
-                                        <Table.Cell>         
-                                            <Header as='h4'>
-                                                <Header.Content>
-                                                    <span class='table'>
-                                                        {item.message}      
-                                                    </span>                 
-                                                </Header.Content>
-                                            </Header>         
                                         </Table.Cell>
                                         <Table.Cell>
                                             <Header as='h4' image>
@@ -119,14 +108,56 @@ class TasksPage extends React.Component{
                                         <Table.Cell>
                                             <Header as='h4'>
                                                 <Header.Content>
-                                                    {item.date}
+                                                {(() => {
+                                                    if(item.schedule_run == true){
+                                                        return "Run"
+                                                    }else if(item.schedule_status == true){
+                                                        return "Active"
+                                                    }else{
+                                                        return "Inactive"
+                                                    }
+                                                })()}
+                                                </Header.Content>
+                                            </Header>         
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <Header as='h4'>
+                                                <Header.Content>
+                                                    {item.updated_at}
                                                 </Header.Content>
                                             </Header>                         
                                         </Table.Cell>
                                     </Table.Row>
                                     
                                 ))
-                            }                  
+                            }
+                            {/* <Table.Row>
+                                <Table.Cell>OpenSuseRepo</Table.Cell>
+                                <Table.Cell> 
+                                    <Header as='h4' image>
+                                        <Image src='https://react.semantic-ui.com/images/avatar/small/matthew.png' rounded size='mini' />
+                                        <Header.Content>
+                                            John Boo
+                                        </Header.Content>
+                                    </Header>
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <Header as='h4' image>
+                                        <Header.Content>
+                                            Run
+                                        <Header.Subheader>80%</Header.Subheader>
+                                        </Header.Content>
+                                    </Header>
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <Header as='h4' image>
+                                        <Header.Content>
+                                        15 Sep, 8:56 AM
+                                        <Header.Subheader>(2013)</Header.Subheader>
+                                        </Header.Content>
+                                    </Header>
+                                </Table.Cell>
+                            </Table.Row>*/}
                         </Table.Body>
 
                         <Table.Footer>
@@ -154,4 +185,4 @@ class TasksPage extends React.Component{
     }
 }
 
-export default TasksPage;
+export default RepositoryPage;

@@ -30,9 +30,9 @@ class MainMenu extends React.Component{
                     <Menu.Item header>WeMirror</Menu.Item>
                         <Menu.Item
                             name='Repositories'
-                            active={url() === "http://localhost:3000/"}
+                            active={url() === "/repository"}
                             onClick={this.handleItemClick}
-                            as={Link} to="/"
+                            as={Link} to="/repository"
                         />
                         <Menu.Item
                             name='users'
@@ -46,6 +46,7 @@ class MainMenu extends React.Component{
                             onClick={this.handleItemClick}
                             as={Link} to="/tasks"
                         />
+                        
                         <Menu.Menu position='right'>
                             <Menu.Item
                                 name='authorize'
