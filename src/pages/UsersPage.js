@@ -5,15 +5,21 @@ import axios from 'axios';
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router'
+import { Pagination } from 'semantic-ui-react'
 
 class UsersPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { data: [], redirectFail: false };
+        this.state = { data: [],
+            redirectFail: false,
+            activePage: 1,
+            totalPages: 1
+            };
     }
-    componentDidMount() {
+
+    updateUserList = (page=1) => {
         axios.get(
-            Query.userGET,
+            Query.userListGet((page-1) * 15, 15),
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -29,7 +35,32 @@ class UsersPage extends React.Component{
                     console.log(error.data);
                 }
             );
+    }
+
+    componentDidMount() {
+        this.updateUserList()
+        axios.get(
+                Query.userTotalPages(),
+                {   headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                        }
+                })
+                .then((response) => {
+                    var data = response.data;
+                    this.setState({ totalPages: data });
+                },
+                (error) => {
+                    this.setState({ redirectFail: true});
+                    console.log(error.data);
+                }
+        ); 
       }
+
+      changePage = (e, { activePage }) => {
+        this.setState({ activePage })
+        this.updateUserList(activePage) 
+    }
 
     render(){
         console.log(this.state.data);
@@ -106,18 +137,7 @@ class UsersPage extends React.Component{
                                 <Table.Footer>
                                     <Table.Row>
                                         <Table.HeaderCell colSpan='4'>
-                                        <Menu floated='right' pagination>
-                                            <Menu.Item as='a' icon>
-                                            <Icon name='chevron left' />
-                                            </Menu.Item>
-                                            <Menu.Item as='a'>1</Menu.Item>
-                                            <Menu.Item as='a'>2</Menu.Item>
-                                            <Menu.Item as='a'>3</Menu.Item>
-                                            <Menu.Item as='a'>4</Menu.Item>
-                                            <Menu.Item as='a' icon>
-                                            <Icon name='chevron right' />
-                                            </Menu.Item>
-                                        </Menu>
+                                        <Pagination defaultActivePage={1} totalPages={Math.ceil(this.state.totalPages/15)} onPageChange={this.changePage}/>
                                         </Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Footer>

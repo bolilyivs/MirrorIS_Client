@@ -47,5 +47,29 @@ export default class Query {
       return Query.serverName + '/zpool';
     }
 
+    static taskTotalPages(){
+      return Query.serverName + '/task/count';
+    }
+
+    static taskListGet(offset, limit){
+      return Query.serverName + '/task?offset=' + offset + "&limit=" + limit;
+    }
+
+    static repositoryTotalPages(){
+      return Query.serverName + '/repository/count';
+    }
+
+    static repositoryListGet(offset, limit){
+      return Query.serverName + '/repository?offset=' + offset + "&limit=" + limit;
+    }
+
+    static userTotalPages(){
+      return Query.serverName + '/user/count';
+    }
+
+    static userListGet(offset, limit){
+      return Query.serverName + '/user?offset=' + offset + "&limit=" + limit;
+    }
+
   }
 

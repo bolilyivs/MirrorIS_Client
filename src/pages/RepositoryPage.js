@@ -12,16 +12,16 @@ class RepositoryPage extends React.Component{
         super(props)
         this.state = { 
             data: [], 
-            redirectFail: false,
+            activePage: 1,
             offset: 0,
             limit: 15,
             totalPages: 1
         }
     }
 
-    componentDidMount() {
+    updateRepositoryList = (page=1) => {
         axios.get(
-            Query.repositoryGET,
+            Query.repositoryListGet((page-1) * 15, 15),
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -36,6 +36,32 @@ class RepositoryPage extends React.Component{
                 console.log(error.data);
             }
         );
+    }
+
+    componentDidMount() {
+        this.updateRepositoryList()
+        axios.get(
+                Query.repositoryTotalPages(),
+                {   headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                        }
+                })
+                .then((response) => {
+                    var data = response.data;
+                    this.setState({ totalPages: data });
+                },
+                (error) => {
+                    this.setState({ redirectFail: true});
+                    console.log(error.data);
+                }
+        );     
+    }
+
+    changePage = (e, { activePage }) => {
+        this.setState({ activePage })
+        this.updateRepositoryList(activePage)
+        
     }
 
     render(){
@@ -143,7 +169,7 @@ class RepositoryPage extends React.Component{
                         <Table.Footer>
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
-                                <Pagination defaultActivePage={5} totalPages={10} />
+                            <Pagination defaultActivePage={1} totalPages={Math.ceil(this.state.totalPages/15)} onPageChange={this.changePage}/>
                             </Table.HeaderCell>
                         </Table.Row>
                         </Table.Footer>
