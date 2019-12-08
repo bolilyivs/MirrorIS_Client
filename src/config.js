@@ -44,7 +44,6 @@ export default class Query {
     }
 
     static poolGET(){
-      console.log(Query.serverName + '/zpool')
       return Query.serverName + '/zpool';
     }
 

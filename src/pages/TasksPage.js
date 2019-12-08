@@ -5,11 +5,18 @@ import { Link } from 'react-router-dom'
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router'
+import { Pagination } from 'semantic-ui-react'
 
 class TasksPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = {data: [], redirectFail: false}
+        this.state = {data: [],
+             redirectFail: false,
+             activePage: 1,
+             offset: 0,
+             limit: 15,
+             totalPages: 1
+            }
         console.log(new Cookies().get('username'));
         console.log(new Cookies().get('password'));
         if(new Cookies().get('test') == null){
@@ -17,9 +24,9 @@ class TasksPage extends React.Component{
         }
     }
 
-    componentDidMount() {
+    updateTaskList = (page = 1) => {
         axios.get(
-            Query.taskGET,
+            Query.taskListGet((page-1) * 15, 15),
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -35,7 +42,34 @@ class TasksPage extends React.Component{
                     console.log(error.data);
                 }
             );
-      }
+    }
+
+    componentDidMount() {
+        this.updateTaskList()
+        axios.get(
+                Query.taskTotalPages(),
+                {   headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                        }
+                })
+                .then((response) => {
+                    var data = response.data;
+                    this.setState({ totalPages: data });
+                },
+                (error) => {
+                    this.setState({ redirectFail: true});
+                    console.log(error.data);
+                }
+        );     
+    }
+
+    changePage = (e, { activePage }) => {
+        this.setState({ activePage })
+        this.updateTaskList(activePage)
+        
+    }
+    
 
     render(){
         console.log(this.state.data);
@@ -56,6 +90,13 @@ class TasksPage extends React.Component{
                     <Table singleLine fixed>
                         <Table.Header>
                         <Table.Row>
+                        <Table.HeaderCell>
+                                <Header as='h3'>
+                                    <Header.Content>
+                                        №
+                                    </Header.Content>
+                                </Header>     
+                            </Table.HeaderCell>
                             <Table.HeaderCell>
                                 <Header as='h3'>
                                     <Header.Content>
@@ -91,6 +132,15 @@ class TasksPage extends React.Component{
                             {
                                 this.state.data.map(item =>(
                                     <Table.Row key={item.id}>
+                                        <Table.Cell>
+                                            <Header as='h4'>
+                                                <Header.Content>
+                                                <span class='table'>
+                                                        {item.id}      
+                                                    </span>                                        
+                                                </Header.Content>
+                                            </Header>     
+                                        </Table.Cell>
                                         <Table.Cell>
                                             <Header as='h4'>
                                                 <Header.Content>
@@ -131,19 +181,8 @@ class TasksPage extends React.Component{
 
                         <Table.Footer>
                         <Table.Row>
-                            <Table.HeaderCell colSpan='4'>
-                            <Menu floated='right' pagination>
-                                <Menu.Item as='a' icon>
-                                <Icon name='chevron left' />
-                                </Menu.Item>
-                                <Menu.Item as='a'>1</Menu.Item>
-                                <Menu.Item as='a'>2</Menu.Item>
-                                <Menu.Item as='a'>3</Menu.Item>
-                                <Menu.Item as='a'>4</Menu.Item>
-                                <Menu.Item as='a' icon>
-                                <Icon name='chevron right' />
-                                </Menu.Item>
-                            </Menu>
+                            <Table.HeaderCell colSpan='5'>
+                                <Pagination defaultActivePage={1} totalPages={Math.ceil(this.state.totalPages/15)} onPageChange={this.changePage}/>
                             </Table.HeaderCell>
                         </Table.Row>
                         </Table.Footer>

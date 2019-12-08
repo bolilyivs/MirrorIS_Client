@@ -5,11 +5,18 @@ import { Link } from 'react-router-dom'
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router'
+import { Pagination } from 'semantic-ui-react'
 
 class RepositoryPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { data: [], redirectFail: false }
+        this.state = { 
+            data: [], 
+            redirectFail: false,
+            offset: 0,
+            limit: 15,
+            totalPages: 1
+        }
     }
 
     componentDidMount() {
@@ -136,18 +143,7 @@ class RepositoryPage extends React.Component{
                         <Table.Footer>
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
-                            <Menu floated='right' pagination>
-                                <Menu.Item as='a' icon>
-                                <Icon name='chevron left' />
-                                </Menu.Item>
-                                <Menu.Item as='a'>1</Menu.Item>
-                                <Menu.Item as='a'>2</Menu.Item>
-                                <Menu.Item as='a'>3</Menu.Item>
-                                <Menu.Item as='a'>4</Menu.Item>
-                                <Menu.Item as='a' icon>
-                                <Icon name='chevron right' />
-                                </Menu.Item>
-                            </Menu>
+                                <Pagination defaultActivePage={5} totalPages={10} />
                             </Table.HeaderCell>
                         </Table.Row>
                         </Table.Footer>
