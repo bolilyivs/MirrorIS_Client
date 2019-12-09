@@ -1,7 +1,10 @@
 import React from 'react';
-import {Menu, Segment } from 'semantic-ui-react'
+import {Menu, Segment, Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router'
+import Cookies from 'universal-cookie';
+import {history} from "../config"
 
 function url() {
     return window.location.href.replace(/(.+\w\/)(.+)/,"/$2");
@@ -10,21 +13,43 @@ function url() {
 class MainMenu extends React.Component{
     constructor(props){
         super(props);
-
+        this.state = { activeItem: '', redirect: true }
     }
-    state = { activeItem: '' }
+    
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-    componentWillUpdate(){
-        
+    handleLogout = () => { 
+        new Cookies().remove('username');
+        new Cookies().remove('password');
+        history.push("/login");
+        history.go(); 
+      }
+
+    getUsername(){
+        let username = new Cookies().get('username');
+        return username
+    }
+
+    getMenu(){
+        let username = this.getUsername()
+        let logout = (<Dropdown.Item text="Logout"  as={Link} to="/login" onClick={this.handleLogout}/>);
+        let profile = (<Dropdown.Item text="Profile" as={Link} to="/profile" name='profile'
+        active={url() === "/profile"} onClick={this.handleItemClick}/>);
+
+        return <Dropdown item text={`${username}`}>
+            <Dropdown.Menu>
+                {profile}
+                {logout}
+            </Dropdown.Menu>
+        </Dropdown>
     }
 
     render(){
         const { activeItem } = this.state
+
         console.log(url())
         
-
         return  <Segment inverted>
                     <Menu inverted pointing secondary size="massive">
                     <Menu.Item header>WeMirror</Menu.Item>
@@ -47,13 +72,13 @@ class MainMenu extends React.Component{
                             as={Link} to="/tasks"
                         />
                         
-                        <Menu.Menu position='right'>
-                            <Menu.Item
-                                name='authorize'
-                                active={activeItem === 'authorize'}
-                                onClick={this.handleItemClick}
-                            />
-                        </Menu.Menu>
+                        {this.getUsername() != null && 
+                        <Menu.Menu 
+                            position='right'
+                        >
+                            {this.getMenu()}
+                        </Menu.Menu>}
+                        
                     </Menu>  
                 </Segment>
     }

@@ -4,23 +4,18 @@ import { Redirect } from 'react-router'
 import axios from 'axios';
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
+import {history} from "../config"
 
-const type = [
-    { key: 0, text: 'User', value: 0 },
-    { key: 1, text: 'Admin', value:  1 }
-  ]
-
-class UpdateUsersPage extends React.Component{
+class ProfilePage extends React.Component{
 
     constructor(props){
         super(props)
-        this.id = this.props.id;
-        this.state = { data: [], username: '', password: '', password2: '', group: '', check: false, 
+        this.state = { data: [], id: -1, username: '', password: '', password2: '', group: '', check: false, 
         redirect: false, redirectFail: false, openDel: false, openUpdt: false
         }
         
         axios.get(
-            Query.userInfoGET(this.id),
+            Query.userGetGroupGET,
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -30,7 +25,7 @@ class UpdateUsersPage extends React.Component{
                 .then((response) => {
                     var data = response.data;
                     this.setState({ data });
-                    this.setState({ username: data.username, group: data.group})
+                    this.setState({ id: data.id, username: data.username, group: data.group});
                     console.log(response.data);
                 },(error) => {
                     this.setState({ redirectFail: true});
@@ -54,9 +49,9 @@ class UpdateUsersPage extends React.Component{
         }else{
             this.setState({check: false});
         }
-        var { username, password, group } = this.state
+        var { username, password, group} = this.state
        
-        axios.put(Query.userUpdatePUT(this.id), JSON.stringify({ username, password, group }, null, 3), {
+        axios.put(Query.userUpdatePUT(this.state.id), JSON.stringify({ username, password, group }, null, 2), {
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -64,7 +59,13 @@ class UpdateUsersPage extends React.Component{
             }
         ).then(res => {     
             if(res.data === "ok"){
-                this.setState({ redirect: true})
+                new Cookies().set('username', username, { path: '/' });
+                if(password != null){
+                    new Cookies().set('password', password, { path: '/' });
+                }
+                history.push("/repository");
+                history.go(); 
+                //this.setState({ redirect: true})
             }
             console.log(res.data);
         },(error) => {
@@ -92,13 +93,11 @@ class UpdateUsersPage extends React.Component{
     }
 
     render(){
-        const {username, password, password2, group, redirect, openDel, openUpdt} = this.state
+        const {username, password, password2, redirect, openDel, openUpdt} = this.state
 
-        console.log(group)
-
-        if (redirect) {
-            return <Redirect to='/users'/>;
-        }
+        // if (redirect) {
+        //     return <Redirect to='/users'/>;
+        // }
         
         if (this.state.redirectFail) {
             return <Redirect to='/login'/>;
@@ -126,16 +125,6 @@ class UpdateUsersPage extends React.Component{
                         </Form.Field>
                         <Form.Field required>
                             <Input label={{icon: "key", content: "Confirm password"}} type="password" placeholder='Password' name='password2' value={password2} onChange={this.handleChange}/>
-                        </Form.Field>
-                        <Form.Field required>
-                            <Dropdown 
-                                options={type}  
-                                selection
-                                placeholder='Group'
-                                name='group'  
-                                value={group} 
-                                onChange={this.handleChange}
-                            />
                         </Form.Field>
                     </Form>                         
                 </Grid.Column> 
@@ -184,4 +173,4 @@ class UpdateUsersPage extends React.Component{
     }
 }
 
-export default UpdateUsersPage;
+export default ProfilePage;

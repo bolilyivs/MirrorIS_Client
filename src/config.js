@@ -1,3 +1,6 @@
+import createHistory from 'history/createBrowserHistory';
+
+export const history = createHistory();
 
 export default class Query {
 
@@ -8,6 +11,8 @@ export default class Query {
     static taskGET = Query.serverName + '/task';
 
     static userGET = Query.serverName + '/user';
+    
+    static userGetGroupGET = Query.serverName + '/user/check_group';
 
     static createRepositoryPOST = Query.serverName + `/repository/create`;
     

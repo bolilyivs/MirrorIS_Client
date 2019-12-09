@@ -182,7 +182,7 @@ class UpdateRepositoryPage extends React.Component{
             redirect, openDel, openUpdt, openRun, openReset} = this.state
         
         if (redirect) {
-            return <Redirect to='/'/>;
+            return <Redirect to='/repository'/>;
         }
 
         if (this.state.redirectFail) {

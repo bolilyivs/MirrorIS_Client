@@ -4,6 +4,8 @@ import { Redirect } from 'react-router'
 import axios from 'axios';
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
+import MainMenu from '../modules/MainMenu.js';
+import {history} from "../config"
 
 class LoginPage extends React.Component{
     constructor(props){
@@ -20,6 +22,13 @@ class LoginPage extends React.Component{
         this.setState({redirect: true});
         new Cookies().set('username', username, { path: '/' });
         new Cookies().set('password', password, { path: '/' });
+        history.push("/repository");
+        history.go(); 
+    }
+
+
+    componentDidMount(){
+        this.forceUpdate();
     }
 
     render(){
