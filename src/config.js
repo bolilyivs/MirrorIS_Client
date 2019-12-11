@@ -60,8 +60,16 @@ export default class Query {
       return Query.serverName + '/task?offset=' + offset + "&limit=" + limit;
     }
 
+    static myRepositoryTotalPages(){
+      return Query.serverName + '/repository/my/count';
+    }
+
     static repositoryTotalPages(){
       return Query.serverName + '/repository/count';
+    }
+
+    static myRepositoryListGet(offset, limit){
+      return Query.serverName + '/repository/my?offset=' + offset + "&limit=" + limit;
     }
 
     static repositoryListGet(offset, limit){

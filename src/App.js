@@ -3,6 +3,7 @@ import 'semantic-ui-css/semantic.min.css'
 import {Switch, Route} from 'react-router-dom';
 import MainMenu from "./modules/MainMenu";
 import RepositoryPage from "./pages/RepositoryPage";
+import MyRepositoryPage from "./pages/MyRepositoryPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateRepositoryPage from "./pages/CreateRepositoryPage";
 import UsersPage from "./pages/UsersPage";
@@ -32,6 +33,7 @@ class App extends React.Component{
           <Switch>            
               <Route exact path="/" render = { props => <HomePage />}/>  
               <Route exact path="/repository" render = { props => <RepositoryPage />}/>  
+              <Route exact path="/my_repository" render = { props => <MyRepositoryPage />}/>  
               <Route exact path="/login" render = { props => <LoginPage />}/>  
               <Route exact path="/profile" render = { props => <ProfilePage />}/>  
               <Route exact path="/create_repository" render = { props => <CreateRepositoryPage />}/>  

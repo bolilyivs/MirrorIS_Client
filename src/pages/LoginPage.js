@@ -22,7 +22,7 @@ class LoginPage extends React.Component{
         this.setState({redirect: true});
         new Cookies().set('username', username, { path: '/' });
         new Cookies().set('password', password, { path: '/' });
-        history.push("/repository");
+        history.push("/my_repository");
         history.go(); 
     }
 
@@ -35,7 +35,7 @@ class LoginPage extends React.Component{
         const { username, password, redirect} = this.state
         
         if (redirect) {
-            return <Redirect to='/repository'/>;
+            return <Redirect to='/my_repository'/>;
         }
 
         return <Grid centered stackable columns={3}>

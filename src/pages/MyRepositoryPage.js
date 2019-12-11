@@ -19,7 +19,7 @@ class RepositoryPage extends React.Component{
 
     updateRepositoryList = (page=1) => {
         axios.get(
-            Query.repositoryListGet((page-1) * 15, 15),
+            Query.myRepositoryListGet((page-1) * 15, 15),
             {   headers: {
                     'Content-Type': 'application/json',
                     'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
@@ -39,7 +39,7 @@ class RepositoryPage extends React.Component{
     componentDidMount() {
         this.updateRepositoryList()
         axios.get(
-                Query.repositoryTotalPages(),
+                Query.myRepositoryTotalPages(),
                 {   headers: {
                         'Content-Type': 'application/json',
                         'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),

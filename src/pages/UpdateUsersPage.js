@@ -16,7 +16,7 @@ class UpdateUsersPage extends React.Component{
         super(props)
         this.id = this.props.id;
         this.state = { data: [], username: '', password: '', password2: '', group: '', check: false, 
-        redirect: false, redirectFail: false, openDel: false, openUpdt: false
+        redirect: false, redirectFail: false, openDel: false, openUpdt: false, check_username: false
         }
         
         axios.get(
@@ -66,6 +66,9 @@ class UpdateUsersPage extends React.Component{
             if(res.data === "ok"){
                 this.setState({ redirect: true})
             }
+            if(res.data === "-1"){
+                this.setState({ check_username: true })
+            }   
             console.log(res.data);
         },(error) => {
             this.setState({ redirectFail: true});
@@ -110,6 +113,13 @@ class UpdateUsersPage extends React.Component{
             { this.state.check && (
                <Message size="big" color="red">
                     <Message.Header>Passwords do not match</Message.Header>
+                </Message>
+                )}
+            </Grid.Row>
+            <Grid.Row>
+                { this.state.check_username && (
+               <Message size="big" color="red">
+                    <Message.Header>Name exists</Message.Header>
                 </Message>
                 )}
             </Grid.Row>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Button, Input, Dropdown, Form, Select, GridColumn} from 'semantic-ui-react';
+import {Grid, Button, Input, Dropdown, Form, Select, GridColumn, Message} from 'semantic-ui-react';
 import axios from 'axios';
 import { Redirect } from 'react-router'
 import Query from '../config.js'
@@ -20,7 +20,8 @@ class CreateRepositoryPage extends React.Component{
         
         this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
         mirror_location: '', schedule_number: '', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
-        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false, redirectFail: false
+        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false, redirectFail: false,
+        check_name: false, check_url: false
         }
         
         axios.get(
@@ -62,6 +63,13 @@ class CreateRepositoryPage extends React.Component{
         ).then(res => {     
             if(res.data === "ok"){
                 this.setState({ redirect: true })
+            }  
+            if(res.data === "-1"){
+                this.setState({ check_name: true })
+                
+            }   
+            if(res.data === "-2"){
+                this.setState({ check_url: true })
                 
             }    
             console.log(res.data);
@@ -84,6 +92,18 @@ class CreateRepositoryPage extends React.Component{
                 <Grid.Column></Grid.Column>
                 <Grid.Column><h1>Create Repository</h1></Grid.Column>
                 <Grid.Column></Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+                { this.state.check_name && (
+               <Message size="big" color="red">
+                    <Message.Header>Name exists</Message.Header>
+                </Message>
+                )}
+                { this.state.check_url && (
+               <Message size="big" color="red">
+                    <Message.Header>Wrong Url!</Message.Header>
+                </Message>
+                )}
             </Grid.Row>
             <Grid.Column>
             </Grid.Column>           

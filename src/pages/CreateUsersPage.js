@@ -13,7 +13,7 @@ const type = [
 class CreateUsersPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { username: '', password: '', password2: '', group: '', check: false, redirect: false, redirectFail: false
+        this.state = { username: '', password: '', password2: '', group: '', check: false, check_username: false, redirect: false, redirectFail: false
         }
     }
 
@@ -38,7 +38,10 @@ class CreateUsersPage extends React.Component{
         ).then(res => {     
             if(res.data === "ok"){
                 this.setState({ redirect: true })
-            }    
+            }
+            if (res.data === "-1")  {
+                this.setState({ check_username: true })
+            }
             console.log(res.data);
         },(error) => {
             this.setState({ redirectFail: true});
@@ -61,9 +64,11 @@ class CreateUsersPage extends React.Component{
         return <Grid centered stackable columns={3}>
             <Grid.Row><h1>Create User</h1></Grid.Row>
             <Grid.Row> 
-            { this.state.check && (
+                { (this.state.check || this.state.check_username) && (
                <Message size="big" color="red">
-                    <Message.Header>Passwords do not match</Message.Header>
+                    <Message.Header>Warning</Message.Header>
+                    {(this.state.check_username) ? <p>Username exists</p>: ""}
+                    {(this.state.check) ? <p>Passwords do not match</p>: ""}
                 </Message>
                 )}
             </Grid.Row>

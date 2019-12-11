@@ -2,9 +2,10 @@ import React from 'react';
 import {Menu, Segment, Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import { Link } from 'react-router-dom'
-import { Redirect } from 'react-router'
+import axios from 'axios';
 import Cookies from 'universal-cookie';
 import {history} from "../config"
+import Query from '../config.js'
 
 function url() {
     return window.location.href.replace(/(.+\w\/)(.+)/,"/$2");
@@ -13,7 +14,11 @@ function url() {
 class MainMenu extends React.Component{
     constructor(props){
         super(props);
-        this.state = { activeItem: '', redirect: true }
+        this.state = { activeItem: '',
+         redirect: true,
+         "group" : 1
+        }
+        this.getUserGroup()
     }
     
 
@@ -28,7 +33,27 @@ class MainMenu extends React.Component{
 
     getUsername(){
         let username = new Cookies().get('username');
+        username += (this.state.group == 0)? " (admin)": "";
         return username
+    }
+
+    getUserGroup = () =>{
+        axios.get(
+            Query.userGetGroupGET,
+            {   headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
+                    }
+            })
+            .then((response) => {
+                var data = response.data;
+                this.setState({ "group" : data.group });
+            },
+            (error) => {
+                this.setState({ redirectFail: true});
+                console.log(error.data);
+            }
+        );
     }
 
     getMenu(){
@@ -45,6 +70,25 @@ class MainMenu extends React.Component{
         </Dropdown>
     }
 
+    getAdminItems = () => {
+        if(this.state.group !== 0) 
+            return ""
+        return <React.Fragment>
+        <Menu.Item
+        name='Repositories'
+        active={url() === "/repository"}
+        onClick={this.handleItemClick}
+        as={Link} to="/repository"
+    />
+    <Menu.Item
+        name='users'
+        active={url() === "/users"}
+        onClick={this.handleItemClick}
+        as={Link} to="/users"
+    />
+    </React.Fragment> 
+    }
+
     render(){
         const { activeItem } = this.state
 
@@ -54,17 +98,14 @@ class MainMenu extends React.Component{
                     <Menu inverted pointing secondary size="massive">
                     <Menu.Item header>WeMirror</Menu.Item>
                         <Menu.Item
-                            name='Repositories'
-                            active={url() === "/repository"}
+                            name='My repositories'
+                            active={url() === "/my_repository"}
                             onClick={this.handleItemClick}
-                            as={Link} to="/repository"
+                            as={Link} to="/my_repository"
                         />
-                        <Menu.Item
-                            name='users'
-                            active={url() === "/users"}
-                            onClick={this.handleItemClick}
-                            as={Link} to="/users"
-                        />
+                        {this.getAdminItems() }
+
+                        
                         <Menu.Item
                             name='tasks'
                             active={url() === "/tasks"}
