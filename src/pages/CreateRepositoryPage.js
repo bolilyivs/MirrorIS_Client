@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router'
 import Query from '../config.js'
 import Cookies from 'universal-cookie';
+import NumberInput from 'semantic-ui-react-numberinput';
 
 const options = [
     { key: 'false', text: 'Inactive', value: 'false' },
@@ -19,8 +20,8 @@ class CreateRepositoryPage extends React.Component{
         super(props)
         
         this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
-        mirror_location: '', schedule_number: '', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
-        schedule_minute: '', schedule_hour: '', schedule_day: '', schedule_month: '', schedule_year: '', redirect: false, redirectFail: false,
+        mirror_location: '', schedule_number: '1', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
+        schedule_minute: '0', schedule_hour: '0', schedule_day: '0', schedule_month: '0', schedule_year: '0', redirect: false, redirectFail: false,
         check_name: false, check_url: false
         }
         
@@ -41,6 +42,7 @@ class CreateRepositoryPage extends React.Component{
     }
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
+    handleChangeNumber = (name, value) => this.setState({ [name]: value })
 
     handleSubmit = () => {
         var { name, mirror_url, mirror_location, mirror_type, mirror_zpool, mirror_args, schedule_status, schedule_run,  schedule_number, 
@@ -163,22 +165,35 @@ class CreateRepositoryPage extends React.Component{
                         </Form.Field> 
 
                          <Form.Field>
-                            <Input label='Number of snapshots' placeholder='Number' name='schedule_number' value={schedule_number} onChange={this.handleChange}/>
+                            <label>Number of snapshots</label>
+                            <NumberInput  type="number" placeholder='Number'
+                             name='schedule_number' value={schedule_number} 
+                             onChange={(value) => this.handleChangeNumber("schedule_number", value)}  minValue={1}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Minutes' placeholder='Minutes' name='schedule_minute' value={schedule_minute} onChange={this.handleChange}/>
+                            <label>Minutes</label>
+                            <NumberInput  placeholder='Minutes' name='schedule_minute' value={schedule_minute} 
+                            onChange={(value) => this.handleChangeNumber("schedule_minute", value)} minValue={0}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Hours' placeholder='Hours' name='schedule_hour' value={schedule_hour} onChange={this.handleChange}/>
+                            <label>Hours</label>
+                            <NumberInput  placeholder='Hours' name='schedule_hour' value={schedule_hour} 
+                            onChange={(value) => this.handleChangeNumber("schedule_hour", value)} minValue={0}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Days' placeholder='Days' name='schedule_day' value={schedule_day} onChange={this.handleChange}/>
+                            <label>Days</label>
+                            <NumberInput placeholder='Days' name='schedule_day' value={schedule_day}
+                             onChange={(value) => this.handleChangeNumber("schedule_day", value)} minValue={0}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Months' placeholder='Months' name='schedule_month' value={schedule_month} onChange={this.handleChange}/>
+                            <label>Months</label>
+                            <NumberInput   placeholder='Months' name='schedule_month' value={schedule_month}
+                             onChange={(value) => this.handleChangeNumber("schedule_month", value)} minValue={0}/>
                         </Form.Field>
                         <Form.Field>
-                            <Input label='Years' placeholder='Years' name='schedule_year' value={schedule_year} onChange={this.handleChange}/>
+                            <label>Years</label>
+                            <NumberInput  placeholder='Years' name='schedule_year' value={schedule_year}
+                             onChange={(value) => this.handleChangeNumber("schedule_year", value)} minValue={0}/>
                         </Form.Field> 
                        
                     </Form>                         
