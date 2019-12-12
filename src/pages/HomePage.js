@@ -11,9 +11,9 @@ class DetailTaskPage extends React.Component{
         return <Grid centered stackable columns={2}>
                     <Grid.Row>
                         <Grid.Column>
-                            <Segment padded='very'>
+                            <Segment padded='very' textAlign="center">
                                 <Link to="/login">
-                                    <Button primary centered size="big" style={{width: "200px"}}>Login</Button>
+                                    <Button primary centered  size="big" style={{width: "200px"}}>Login</Button>
                                 </Link> 
                             </Segment>                                      
                         </Grid.Column>    
