@@ -22,7 +22,7 @@ class CreateRepositoryPage extends React.Component{
         this.state = { name: '', mirror_url: '', schedule_status: '', schedule_run: false,
         mirror_location: '', schedule_number: '1', mirror_type: '', 'mirror_zpool':'', 'pool_data' : '', 'mirror_args':'-vaHz',
         schedule_minute: '0', schedule_hour: '0', schedule_day: '0', schedule_month: '0', schedule_year: '0', redirect: false, redirectFail: false,
-        check_name: false, check_url: false
+        check_name: false, check_url: false, check_locate:false
         }
         
         axios.get(
@@ -73,6 +73,10 @@ class CreateRepositoryPage extends React.Component{
             if(res.data === "-2"){
                 this.setState({ check_url: true })
                 
+            }
+            if(res.data === "-3"){
+                this.setState({ check_locate: true })
+                
             }    
             console.log(res.data);
         },(error) => {
@@ -104,6 +108,11 @@ class CreateRepositoryPage extends React.Component{
                 { this.state.check_url && (
                <Message size="big" color="red">
                     <Message.Header>Wrong Url!</Message.Header>
+                </Message>
+                )}
+                { this.state.check_locate && (
+               <Message size="big" color="red">
+                    <Message.Header>Wrong locate!</Message.Header>
                 </Message>
                 )}
             </Grid.Row>
