@@ -10,7 +10,10 @@ import {history} from "../config"
 class LoginPage extends React.Component{
     constructor(props){
         super(props)
-        this.state = { username: '', password: '', redirect: false
+        this.state = { username: '',
+         password: '',
+         redirect: false,
+         wrong: false
         }
     }
 
@@ -19,11 +22,22 @@ class LoginPage extends React.Component{
     handleSubmit = () => {
         var { username, password} = this.state
         console.log(JSON.stringify({ username, password}, null, 11));
-        this.setState({redirect: true});
-        new Cookies().set('username', username, { path: '/' });
-        new Cookies().set('password', password, { path: '/' });
-        history.push("/my_repository");
-        history.go(); 
+        
+        axios.get(Query.userGetGroupGET, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Basic ' + btoa(username + ":" + password),
+                }
+            }
+        ).then(res => {     
+            this.setState({redirect: true});
+            new Cookies().set('username', username, { path: '/' });
+            new Cookies().set('password', password, { path: '/' });
+            history.push("/my_repository");
+            history.go(); 
+        },(error) => {
+            this.setState({wrong: true});
+      })
     }
 
 
@@ -41,11 +55,11 @@ class LoginPage extends React.Component{
         return <Grid centered stackable columns={3}>
             <Grid.Row><h1>Login</h1></Grid.Row>
             <Grid.Row> 
-            {/* { this.state.check && (
+            { this.state.wrong && (
                <Message size="big" color="red">
-                    <Message.Header>Passwords do not match</Message.Header>
+                    <Message.Header>Wrong username or password</Message.Header>
                 </Message>
-                )} */}
+                )}
             </Grid.Row>
             <Grid.Column>
 

@@ -120,8 +120,8 @@ class UsersPage extends React.Component{
                                                     <Header.Content>
                                                     {(() => {
                                                         switch (item.group) {
-                                                            case 0:     return "User";
-                                                            case 1:     return "Admin";
+                                                            case 0:     return "Admin";
+                                                            case 1:     return "User";
                                                             default:    return "User";
                                                         }
                                                     })()}
