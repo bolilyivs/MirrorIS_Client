@@ -90,7 +90,7 @@ class CreateRepositoryPage extends React.Component{
             schedule_minute, schedule_hour, schedule_day, schedule_month, schedule_year, redirect} = this.state
         
         if (redirect) {
-            return <Redirect to='/repository'/>;
+            return <Redirect to='/my_repository'/>;
         }
 
         return <Grid centered stackable columns={3}>
