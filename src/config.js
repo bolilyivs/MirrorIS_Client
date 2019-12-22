@@ -4,7 +4,7 @@ export const history = createHistory();
 
 export default class Query {
 
-    static serverName = "http://127.0.0.1:5000"
+    static serverName = "http://127.0.0.1:5000/api"
 
     static repositoryGET = Query.serverName + '/repository';
 
