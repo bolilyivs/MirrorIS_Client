@@ -11,7 +11,7 @@ class ProfilePage extends React.Component{
     constructor(props){
         super(props)
         this.state = { data: [], id: -1, username: '', password: '', password2: '', group: '', check: false, 
-        redirect: false, redirectFail: false, openDel: false, openUpdt: false
+            redirectFail: false, openUpdt: false
         }
         
         axios.get(
@@ -33,8 +33,6 @@ class ProfilePage extends React.Component{
                 }
             );           
     }
-
-    handleOpenDel = () => {this.setState({ openDel: true })}
 
     handleOpenUdpt = () => {this.setState({ openUpdt: true })}
 
@@ -63,28 +61,9 @@ class ProfilePage extends React.Component{
                 if(password != null){
                     new Cookies().set('password', password, { path: '/' });
                 }
-                history.push("/repository");
+                history.push("/my_repository");
                 history.go(); 
-                //this.setState({ redirect: true})
             }
-            console.log(res.data);
-        },(error) => {
-            this.setState({ redirectFail: true});
-            console.log(error.data);
-      })
-    }
-
-    handleDelete = () => {
-        axios.delete(Query.userDeleteDELETE(this.id),{
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': 'Basic ' + btoa(new Cookies().get('username') + ":" + new Cookies().get('password')),
-                }
-            }
-        ).then(res => {     
-            if(res.data === "ok"){
-                this.setState({ redirect: true })
-            }    
             console.log(res.data);
         },(error) => {
             this.setState({ redirectFail: true});
@@ -93,11 +72,7 @@ class ProfilePage extends React.Component{
     }
 
     render(){
-        const {username, password, password2, redirect, openDel, openUpdt} = this.state
-
-        // if (redirect) {
-        //     return <Redirect to='/users'/>;
-        // }
+        const {password, password2, openUpdt} = this.state
         
         if (this.state.redirectFail) {
             return <Redirect to='/login'/>;
@@ -118,9 +93,6 @@ class ProfilePage extends React.Component{
                 <Grid.Column>
                     <Form size='big'>       
                         <Form.Field required>
-                            <Input defaultValue={username} label={{icon: "user", content: "User Name"}} placeholder='Name' name='username' value={username} onChange={this.handleChange} />
-                        </Form.Field>
-                        <Form.Field required>
                             <Input label={{icon: "key", content: "Password"}} type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
                         </Form.Field>
                         <Form.Field required>
@@ -132,7 +104,7 @@ class ProfilePage extends React.Component{
             </Grid.Column>
 
             <Button primary size="big" content='Udpate' onClick={this.handleOpenUdpt}  
-                disabled={ !this.state.username }/>  
+                disabled={ !this.state.password || !this.state.password2 }/>  
             <Modal open={openUpdt} size='mini'>
                 <Modal.Content>
                     <p style = {{fontSize: 20}}>
@@ -147,24 +119,6 @@ class ProfilePage extends React.Component{
                     labelPosition='right'
                     content='Yes'
                     onClick={this.handleUpdate} 
-                />
-                </Modal.Actions>
-            </Modal>              
-            <Button negative size="big" content='Delete' onClick={this.handleOpenDel}/> 
-            <Modal open={openDel} size='mini'>
-                <Modal.Content>
-                    <p style = {{fontSize: 20}}>
-                        Delete this user?            
-                    </p>   
-                </Modal.Content>
-                <Modal.Actions>
-                <Button negative onClick={this.handleCancel}>No</Button>
-                <Button
-                    positive
-                    icon='checkmark'
-                    labelPosition='right'
-                    content='Yes'
-                    onClick={this.handleDelete}
                 />
                 </Modal.Actions>
             </Modal>              
